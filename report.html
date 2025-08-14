@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Fabienne Bölsterli, David Gerner, Valérie Lüthi" />
+  <title>Online-Shoppers Purchase Intention</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Online-Shoppers Purchase Intention</h1>
+<p class="author">Fabienne Bölsterli, David Gerner, Valérie Lüthi</p>
+<p class="date">Machine Learning 1 - FS25</p>
+</header>
+<p>```{r setup, include = FALSE, warning = FALSE} knitr::opts_chunk$set(
+eval = TRUE, echo = TRUE, fig.align = “center”, message = FALSE, warning
+= FALSE, include = TRUE )</p>
+<p>set.seed(123) # global seed</p>
+<pre><code>
+# Introduction
+
+The e-commerce industry has grown rapidly over the past years, yet
+conversion rates are not increasing as much. To address this gap, online
+retailers are looking for solutions to present online shoppers with
+personalized promotions. Whereas physical retail relies on their
+salespeople&#39;s knowledge and experience to realize successful sales,
+online retail makes use of machine learning to detect and predict
+customers behavior patterns (Sakar et al., 2019)[@sakar2019real].
+
+In this project, our goal is to predict whether a visitor of an online
+shopping website will complete a purchase or exit the website without
+purchasing anything. To achieve this, we will apply the different
+machine learning models that were taught in the &quot;Applied Machine
+Learning and Predictive Modelling 1&quot; class at Hochschule Luzern (HSLU)
+in the spring semester of 2025.
+
+## Dataset
+
+The data set used in this project was initially collected by Sakar et
+al. (2019)[@sakar2019real] for their real-time online shopper behavior
+analysis system to predict visitor&#39;s shopping intent and likelihood of
+website abandonment. It is made available through the UCI Machine
+Learning Repository (Sakar &amp; Kastro,
+2018)[@online_shoppers_purchasing_intention_dataset_468].
+
+The data set consists of 12&#39;330 observations of shopping sessions for 18
+variables in total. Each session belongs to a different user within a
+one-year time frame. This ensures that the data is not confounded by
+specific campaigns, special days, user profiles, or seasonal effects.
+According to Sakar et al. (2019)[@sakar2019real], the variables can be
+described as follows.
+
+There are six variables containing information about different types of
+pages visited, both as the total number of such pages and the total time
+spent on them. *Administrative* measures the total number of pages about
+account management visited, *Administrative_Duration* measures the total
+amount of time in seconds spent on such pages. *Informational* measures
+the total number of pages with information on the Website, communication
+and address visited, *Informational_Duration* measures the total amount
+of time in seconds spent on such pages. *ProductRelated* measures the
+total number of pages related to products visited,
+*ProductRelated_Duration* measures the total amount of time in seconds
+spent on such pages.
+
+There are three variables containing metrics measured by Google
+Analytics for the pages in the e-commerce site. *BounceRates* represents
+the average bounce rate of the web pages visited by this visitor. The
+bounce rate of a web page indicates the proportion of visitors who leave
+the web site after viewing only this page. *ExitRates* represents the
+average exit rate of the web pages visited by a visitor during their
+session. The exit rate of a web page indicates the proportion of
+visitors who leave the web site from this page. *PageValues* represents
+the average page value of the web pages visited by the visitor. The page
+value is the average monetary value of a web page visited by a visitor
+before completing a transaction.
+
+There is an additional variable *SpecialDay* indicating the closeness of
+the visiting time of a web page to a special day (e.g. Valentine&#39;s Day),
+taking into account the duration between the order and delivery date.
+
+The data set also contains multiple categorical variables with session
+and user information. There is information on the operating system
+(*OperatingSystems*) and browser (*Browser*) used by the visitor and the
+geographic region (*Region*) where the session was started.
+*TrafficType* specifies how the visitor arrived at the website (e.g.
+direct, banner) and *VisitorType* specifies whether the visitor is new,
+returning, or other. There is also information on the visiting date,
+whether it falls on the weekend (*Weekend*) and during which month it is
+(*Month*). Finally, there is *Revenue* indicating whether the
+session was finalized with a transaction.
+
+# Data Preparation
+
+This chapter provides an overview how the data set was prepared before
+the exploratory graphical analysis. For this report and the different
+analysis, several libraries were used.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see all libraries*&lt;/summary&gt;
+
+```{r libraries}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(ggcorrplot) # to visualize correlation heatmap
+library(reshape2) # for reshaping and aggregating data
+library(knitr)
+library(kableExtra) # to attach footnote to table
+library(patchwork) # to display plots next to each other
+
+library(mgcv) # GAM
+library(caret) # classification and regression training
+library(nnet) # for neural network
+library(neuralnet) # for neural network, method = nnet
+library(themis) # to handle class imbalance
+library(gamlss.add) # for extra smooth functions incl. neural networks
+library(ROCR) # to plot ROC curve
+
+library(MASS)
+library(lattice)
+library(e1071)
+library(pROC)
+library(PRROC)</code></pre>
+</details>
+<p>The “Online Shoppers Intention” data set contains 12’330 observations
+of 18 variables of which ten are numeric and eight categorical. The data
+set contains no missing values.</p>
+<details>
+<summary>
+<em>Click to see the full dataset</em>
+</summary>
+<p>```{r loading dataset} df &lt;-
+read.csv(“../data/online_shoppers_intention.csv”) str(df)</p>
+<h1 id="check-for-missing-values">check for missing values</h1>
+<p>colSums(is.na(df))</p>
+<pre><code>
+&lt;/details&gt;
+
+As the final step of data preparation, all variables representing
+categorical data were converted into factors to ensure their accurate
+representation. Since the data is from the same year, we decided to
+convert the variable *Month* into a factor instead of a date. It only
+has ten levels since the months January and April do not appear in the
+data set.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the data set after factor definition*&lt;/summary&gt;
+
+```{r defining factors}
+# define columns with factors
+cols_to_factor &lt;- c(&quot;OperatingSystems&quot;, &quot;Browser&quot;, &quot;Month&quot;, &quot;Region&quot;, &quot;TrafficType&quot;, &quot;VisitorType&quot;, &quot;Weekend&quot;, &quot;Revenue&quot;)
+
+# convert columns to factors
+df[cols_to_factor] &lt;- lapply(df[cols_to_factor], factor)
+
+# check factor levels
+sapply(df[cols_to_factor], levels)
+
+# check dataset
+str(df)</code></pre>
+</details>
+<p><br></p>
+<h1 id="exploratory-graphical-analysis">Exploratory Graphical
+Analysis</h1>
+<p>The exploratory graphical analysis was conducted in order to gain
+extensive understanding of the different variables and their
+relationships. The main focus was on <em>Revenue</em> as a binary target
+variable to indicate whether the visit had been finalized with a
+transaction or not.</p>
+<p>Since class balance is crucial for model training, we first examined
+the distribution of our target variable <em>Revenue</em>. The analysis
+showed a significant imbalance with 10’422 (84.5%) instances of visitors
+abandoning the shopping session and only 1’908 (15.5%) instances of
+finalized transactions. This imbalance might lead to our models being
+biased toward predicting the majority class unless corrective measures
+are taken.</p>
+<p>```{r class balance revenue, echo=FALSE} revenue_table &lt;-
+as.data.frame(table(df$Revenue)) %&gt;% mutate(Proportion = Freq /
+sum(Freq))</p>
+<p>kable(revenue_table, col.names = c(“Revenue”, “Count”, “Proportion”),
+digits = 3) %&gt;% kable_styling(full_width = FALSE, position =
+“center”, font_size = 12)</p>
+<pre><code>
+
+## Correlation Matrix
+
+To get a better understanding of the relationships between the
+variables, we computed the pearson correlation coefficients for every
+relationship. This is visualized in the correlation heat map with the
+color indicating the strength and direction of the correlations.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code for the correlation heatmap*&lt;/summary&gt;
+
+```{r correlation heatmap code}
+# Temporary Copy of the df
+df_cor &lt;- df
+
+# Label encoding for categorical variables
+df_cor$OperatingSystems &lt;- as.numeric(factor(df$OperatingSystems))
+df_cor$Browser &lt;- as.numeric(factor(df$Browser))
+df_cor$Region &lt;- as.numeric(factor(df$Region))
+df_cor$TrafficType &lt;- as.numeric(factor(df$TrafficType))
+df_cor$VisitorType &lt;- as.numeric(factor(df$VisitorType))
+df_cor$Month &lt;- as.numeric(factor(df$Month))
+
+# Label encoding for binary variables
+df_cor$Weekend &lt;- as.numeric(factor(df$Weekend))
+df_cor$Revenue &lt;- as.numeric(factor(df$Revenue))
+
+# Calculate the correlation matrix
+cor_matrix &lt;- cor(df_cor[, sapply(df_cor, is.numeric)], method = &quot;pearson&quot;)
+cor_matrix_rounded &lt;- round(cor_matrix, 2)
+
+# Melt the correlation matrix
+melted_cor &lt;- melt(cor_matrix_rounded)
+
+# Plotting the heatmap with proper labeling of axes
+plot_heatmap &lt;- ggplot(data = melted_cor, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color=&quot;white&quot;, width=0.9, height=0.9) +  # Add space between tiles
+  scale_fill_gradient2(low=&quot;#ca0020&quot;, high=&quot;#1c9099&quot;, mid=&quot;white&quot;, limits = c(-1, 1)) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),  # Adjust x-axis labels
+        axis.title.x = element_blank(),  # Remove x-axis title
+        axis.title.y = element_blank(),  # Remove y-axis title
+        plot.title = element_text(hjust = 0.5),  # Adjust title position
+        panel.grid = element_blank()) +  # Remove grid lines
+  labs(title = &quot;Heatmap - Pearson&#39;s Correlation Coefficients&quot;)</code></pre>
+</details>
+<p><code>{r correlation heatmap plot, echo=FALSE, , echo=FALSE, fig.width = 7, fig.asp = 0.8} # Plotting the heatmap with proper labeling of axes plot_heatmap &amp;   theme(plot.title = element_text(size = 13),         axis.text.x = element_text(size=8),         axis.text.y = element_text(size=8))</code></p>
+<p>For the variables <em>OperatingSystems</em>, <em>Region</em> and
+<em>TrafficType</em> (cor = -0.01) as well as <em>Browser</em> (cor =
+0.02), almost no linear correlation with our target variable
+<em>Revenue</em> can be observed. For <em>Revenue</em>, the largest
+linear correlation by far is with <em>PageValues</em> (cor = 0.49). This
+makes sense, considering <em>PageValues</em> reflects the average
+monetary value of the pages a user visits. A small to medium correlation
+is found with <em>ExitRate</em> (cor = -0.21), implicating that higher
+exit rates are associated with lower revenue. All the other variables
+show weak correlations with <em>Revenue</em>.</p>
+<p>There are noteworthy large correlations between other variables too.
+<em>ProductRelated</em> shows a strong positive relationship with
+<em>ProductRelated_Duration</em> (cor = 0.86), meaning the higher the
+number of product related pages visited, the higher the time spent on
+those pages. <em>BounceRates</em> and <em>ExitRates</em> unsurprisingly
+show another strong positive correlation (cor = 0.91), as well as
+<em>Administrative</em> and <em>Administrative_Duration</em> (cor =
+0.60) and <em>Informational</em> and <em>Informational_Duration</em>
+(cor = 0.62). It can be assumed that those high correlations are due to
+the variable pairs measuring different aspects of the same underlying
+shopping behavior.</p>
+<details>
+<summary>
+<em>Click to see the correlation coefficient matrix</em>
+</summary>
+<p>```{r correlation coefficients with effect sizes} # Correlation
+matrix table cor_table &lt;- kable(cor_matrix_rounded, align = ‘c’,
+caption = “Correlation Matrix (Pearson’s Coefficients)”)</p>
+<h1 id="display-with-footnotes-for-effect-size">Display with footnotes
+for effect size</h1>
+<p>cor_table %&gt;% kable_styling(full_width = TRUE, font_size = 11,
+bootstrap_options=“condensed”) %&gt;% footnote(general = “* r = .10 weak
+effect; r = .30 medium effect; r = .50 strong effect.”, general_title =
+“Effect Size Interpretation:”)</p>
+<pre><code>
+&lt;/details&gt;
+
+## Key Variables
+
+We now further explore the variables that showed the highest
+correlations with *Revenue*.
+
+### Product Related and Product Related Duration
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code to create the plots for ProductRelated*&lt;/summary&gt;
+
+```{r code product-related plots, fig.show=&#39;hide&#39;}
+df_eda &lt;- df
+
+# Revenue as numeric for scatterplot
+df_eda$Revenue_numeric &lt;- as.numeric(df_eda$Revenue == TRUE)
+
+# Revenue as factor for histogram
+df_eda$Revenue_label &lt;- factor(df_eda$Revenue, levels = c(FALSE, TRUE),
+                               labels = c(&quot;No Revenue&quot;, &quot;Revenue&quot;))
+
+# Create scatterplot with smoother
+plot_prod &lt;- ggplot(data = df_eda, aes(x = ProductRelated, y = Revenue_numeric)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = &quot;loess&quot;, se = FALSE, color = &quot;lightblue&quot;, aes(group = 1)) +
+  scale_y_continuous(breaks = c(0, 1), labels = c(&quot;No&quot;, &quot;Yes&quot;)) +
+  labs(title = &quot;Revenue by Product Related&quot;, x = &quot;Product Related&quot;, y = &quot;Revenue&quot;) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank()) +
+  theme_minimal()
+
+# Create histogram
+hist_prod &lt;- ggplot(data = df_eda, aes(x = ProductRelated, fill = Revenue_label)) +
+  geom_histogram(position = &quot;identity&quot;, alpha = 0.6) +
+  scale_fill_manual(values = c(&quot;No Revenue&quot; = &quot;lightblue&quot;, &quot;Revenue&quot; = &quot;darkblue&quot;)) +
+  labs(title = &quot;Product Related by Revenue&quot;, x = &quot;Product Related&quot;, y = &quot;Count&quot;,
+       fill = &quot;Revenue&quot;) +
+  theme_minimal()
+
+# display plots
+plot_prod + hist_prod + plot_layout(ncol = 2) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+</details>
+<p><code>{r display product-related plots, echo=FALSE, fig.width=8.5, fig.asp=0.4} # display plots plot_prod + hist_prod + plot_layout(ncol = 2) &amp;   theme(plot.title = element_text(size = 13))</code></p>
+<p>The curve in the scatterplot on the left shows the effect of
+product-related pages on revenue. As the number of product-related page
+views increases, the probability of making a purchase initially
+increases. However, after around 400 product-related pages, the
+probability of a purchase decreases with additional product-related page
+views.</p>
+<p>The histogram on the right displays the distribution of visitors
+based on the number of product-related page views. Most visitors viewed
+fewer than 200 product-related pages, and the number of visitors drops
+off quickly as the number of product-related page views increases. While
+the overall shape of the distribution is similar for both groups,
+visitors who made a purchase tend to view slightly more product-related
+pages compared to visitors that did not make a purchase.</p>
+<details>
+<summary>
+<em>Click to see the code to create the plots for
+ProductRelated_Duration</em>
+</summary>
+<p>```{r code product-related duration plots, fig.show=‘hide’} # Create
+scatterplot with smoother plot_proddur &lt;- ggplot(data = df_eda, aes(x
+= ProductRelated_Duration, y = Revenue_numeric)) + geom_point(alpha =
+0.6) + geom_smooth(method = “loess”, se = FALSE, color = “lightblue”,
+aes(group = 1)) + scale_y_continuous(breaks = c(0, 1), labels = c(“No”,
+“Yes”)) + labs(title = “Revenue by ProductRelated_Duration”, x =
+“ProductRelated_Duration (seconds)”, y = “Revenue”) +
+theme(panel.grid.major.x = element_blank(), panel.grid.minor.x =
+element_blank()) + theme_minimal()</p>
+<h1 id="create-histogram">Create histogram</h1>
+<p>hist_proddur &lt;- ggplot(data = df_eda, aes(x =
+ProductRelated_Duration, fill = Revenue_label)) +
+geom_histogram(position = “identity”, alpha = 0.6) +
+scale_fill_manual(values = c(“No Revenue” = “lightblue”, “Revenue” =
+“darkblue”)) + labs(title = “ProductRelated_Duration by Revenue”, x =
+“ProductRelated_Duration (seconds)”, y = “Count”, fill = “Revenue”) +
+theme_minimal()</p>
+<h1 id="display-plots">display plots</h1>
+<p>plot_proddur + hist_proddur + plot_layout(ncol = 2) &amp;
+theme(plot.title = element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display product-related duration plots, echo=FALSE, fig.width=8.5, fig.asp=0.4}
+# display plots
+plot_proddur + hist_proddur + plot_layout(ncol = 2) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>The scatterplot on the left shows how the number of seconds spent on
+product-related pages relates to the probability of generating revenue.
+The curve rises until about 20’000 seconds and drops significantly
+afterwards. This might indicate that more engaged browsing initially
+increases the likelihood of a visitor to make a purchase. In the
+histogram on the right we see that most visitors spend less than 10’000
+seconds on product pages. Overall, the plots for <em>ProductRelated</em>
+and <em>ProductRelated_Duration</em> show very similar patterns.</p>
+<h3 id="administrative-and-informative">Administrative and
+Informative</h3>
+<details>
+<summary>
+<em>Click to see the code to create the plots for Administrative</em>
+</summary>
+<p>```{r code administrative plots, fig.show=‘hide’} # Create
+scatterplot with smoother plot_admin &lt;- ggplot(data = df_eda, aes(x =
+Administrative, y = Revenue_numeric)) + geom_point(alpha = 0.6) +
+geom_smooth(method = “loess”, se = FALSE, color = “lightblue”, aes(group
+= 1)) + scale_y_continuous(breaks = c(0, 1), labels = c(“No”, “Yes”)) +
+labs(title = “Revenue by Administrative”, x= “Administrative”, y =
+“Revenue”) + theme(panel.grid.major.x = element_blank(),
+panel.grid.minor.x = element_blank()) + theme_minimal()</p>
+<h1 id="create-histogram-1">Create histogram</h1>
+<p>hist_admin &lt;- ggplot(data = df_eda, aes(x = Administrative, fill =
+Revenue_label)) + geom_histogram(position = “identity”, alpha = 0.6) +
+scale_fill_manual(values = c(“No Revenue” = “lightblue”, “Revenue” =
+“darkblue”)) + labs(title = “Administrative by Revenue”, x =
+“Administrative”, y = “Count”, fill = “Revenue”) + theme_minimal()</p>
+<h1 id="display-plots-1">display plots</h1>
+<p>plot_admin + hist_admin + plot_layout(ncol = 2) &amp;
+theme(plot.title = element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display administrative plots, echo=FALSE, fig.width=8.5, fig.asp=0.4}
+# display plots
+plot_admin + hist_admin + plot_layout(ncol = 2, nrow = 1) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>The scatterplot on the left shows how the number of administrative
+pages relates to the probability of generating revenue. The probability
+for revenue increases as users view more administrative pages peaking at
+around 12 but then diminishes at higher counts. This suggests that
+moderate use of administrative pages may signal purchasing intent, while
+excessive use of such pages does not translate into more revenue. The
+histogram shows that the majority of visitors visited zero or few
+administrative pages, especially visitors that did not purchase anything
+often visited no administrative page at all.</p>
+<details>
+<summary>
+<em>Click to see the code to create the plots for Informational</em>
+</summary>
+<p>```{r code informational plots, fig.show=‘hide’} # Create scatterplot
+with smoother plot_info &lt;- ggplot(data = df_eda, aes(x =
+Informational, y = Revenue_numeric)) + geom_point(alpha = 0.6) +
+geom_smooth(method = “gam”, se = FALSE, color = “lightblue”, aes(group =
+1)) + scale_y_continuous(breaks = c(0, 1), labels = c(“No”, “Yes”)) +
+labs(title = “Revenue by Informational Page Count”, x = “Informational
+Page Count”, y = “Revenue”) + theme(panel.grid.major.x =
+element_blank(), panel.grid.minor.x = element_blank()) +
+theme_minimal()</p>
+<h1 id="create-histogram-2">Create histogram</h1>
+<p>hist_info &lt;- ggplot(data = df_eda, aes(x = Informational, fill =
+Revenue_label)) + geom_histogram(position = “identity”, alpha = 0.6) +
+scale_fill_manual(values = c(“No Revenue” = “lightblue”, “Revenue” =
+“darkblue”)) + labs(title = “Informational by Revenue”, x =
+“Informational”, y = “Count”, fill = “Revenue”) + theme_minimal()</p>
+<p>plot_info + hist_info + plot_layout(ncol = 2, nrow = 1) &amp;
+theme(plot.title = element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display informational plots, echo=FALSE, fig.width = 8.5, fig.asp = 0.4}
+# display plots
+plot_info + hist_info + plot_layout(ncol = 2, nrow = 1) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>The scatterplot on the left shows how the number of informational
+pages relates to the probability of generating revenue. The likelihood
+of generating revenue increases with the number of informational pages a
+user visits until around five informational pages before flattening and
+eventually declining after around ten informational pages. This suggests
+that high engagement with informational pages alone is not associated
+with a greater likelihood of generating revenue. The histogram shows
+that the majority of visitors visited zero or very few informational
+pages, both for revenue as well as non-revenue events.</p>
+<h3 id="bounce-and-exit-rates">Bounce and Exit Rates</h3>
+<details>
+<summary>
+<em>Click to see the code to create the plots for BounceRates</em>
+</summary>
+<p>```{r code bounce rates plots, fig.show=‘hide’} # Create scatterplot
+with smoother plot_bounce &lt;- ggplot(data = df_eda, aes(x =
+BounceRates, y = Revenue_numeric)) + geom_point(alpha = 0.6) +
+geom_smooth(method = “loess”, se = FALSE, color = “lightblue”, aes(group
+= 1)) + scale_y_continuous(breaks = c(0, 1), labels = c(“No”, “Yes”)) +
+labs(title = “Revenue by Bounce Rates”, x = “Bounce Rates”, y =
+“Revenue”) + theme(panel.grid.major.x = element_blank(),
+panel.grid.minor.x = element_blank()) + theme_minimal()</p>
+<h1 id="create-histogram-3">Create histogram</h1>
+<p>hist_bounce &lt;- ggplot(data = df_eda, aes(x = BounceRates, fill =
+Revenue_label)) + geom_histogram(position = “identity”, alpha = 0.6) +
+scale_fill_manual(values = c(“No Revenue” = “lightblue”, “Revenue” =
+“darkblue”)) + labs(title = “Bounce Rates by Revenue”, x = “Bounce
+Rates”, y = “Count”, fill = “Revenue”) + theme_minimal()</p>
+<h1 id="display-plots-2">display plots</h1>
+<p>plot_bounce + hist_bounce + plot_layout(ncol = 2) &amp;
+theme(plot.title = element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display bounce rates plots, echo=FALSE, fig.width = 8.5, fig.asp = 0.4}
+# display plots
+plot_bounce + hist_bounce + plot_layout(ncol = 2) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>The scatterplot on the left shows how bounce rates relate to the
+likelihood of generating revenue. The curve peaks at very low bounce
+rates and then drops quickly. This suggests that visitors with lower
+bounce rates are more likely to make a purchase. As the bounce rates go
+up, the likelihood of making a purchase drops quickly. The histogram on
+the right shows how bounce rates differ between visitors who made a
+purchase and those who did not. Most visitors who made a purchase have
+very low bounce rates. Visitors who did not make a purchase have higher
+bounce rates with a noticeable cluster at around 0.2. This indicates
+that visitors who interact with the site and thus have lower bounce
+rates are more likely to generate revenue.</p>
+<details>
+<summary>
+<em>Click to see the code to create the plots for ExitRates</em>
+</summary>
+<p>```{r code exit rates plots, fig.show=‘hide’} # Create scatterplot
+with smoother plot_exit &lt;- ggplot(data = df_eda, aes(x = ExitRates, y
+= Revenue_numeric)) + geom_point(alpha = 0.6) + geom_smooth(method =
+“loess”, se = FALSE, color = “lightblue”, aes(group = 1)) +
+scale_y_continuous(breaks = c(0, 1), labels = c(“No”, “Yes”)) +
+labs(title = “Revenue by Exit Rates”, x = “Exit Rates”, y = “Revenue”) +
+theme(panel.grid.major.x = element_blank(), panel.grid.minor.x =
+element_blank()) + theme_minimal()</p>
+<h1 id="create-histogram-4">Create histogram</h1>
+<p>hist_exit &lt;- ggplot(data = df_eda, aes(x = ExitRates, fill =
+Revenue_label)) + geom_histogram(position = “identity”, alpha = 0.6) +
+scale_fill_manual(values = c(“No Revenue” = “lightblue”, “Revenue” =
+“darkblue”)) + labs(title = “Exit Rates by Revenue”, x = “Exit Rates”, y
+= “Count”, fill = “Revenue”) + theme_minimal()</p>
+<h1 id="display-plots-3">display plots</h1>
+<p>plot_exit + hist_exit + plot_layout(ncol = 2) &amp; theme(plot.title
+= element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display exit rates plots, echo=FALSE, fig.width = 8.5, fig.asp = 0.4}
+# display plots
+plot_exit + hist_exit + plot_layout(ncol = 2) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>The scatterplot on the left shows how exit rates are related to the
+likelihood of generating revenue. The probability of visitors making a
+purchase is high for low exit rates and decreases quickly as the exit
+rates increase. The histogram on the right compares the exit rates of
+visitors who made a purchase and those who did not. Visitors who made a
+purchase tend to have lower exit rates, mostly under 0.05. On the other
+hand, visitors who did not make a purchase are spread out more with an
+additional peak for high exit rates around 0.20. This indicates that
+visitors who continue to browse and do not leave the webpage right away
+and thus have lower exit rates are more likely to generate revenue</p>
+<h3 id="page-values">Page Values</h3>
+<details>
+<summary>
+<em>Click to see the code to create the plots for PageValues</em>
+</summary>
+<p>```{r code page values plots, fig.show=‘hide’} # Create scatterplot
+with smoother (gam because loess has problems with strong skew)
+plot_page &lt;- ggplot(data = df_eda, aes(x = PageValues, y =
+Revenue_numeric)) + geom_point(alpha = 0.6) + geom_smooth(method =
+“gam”, se = FALSE, color = “lightblue”, aes(group = 1)) +
+scale_y_continuous(breaks = c(0, 1), labels = c(“No”, “Yes”)) +
+labs(title = “Revenue by Page Values”, x = “Page Values”, y = “Revenue”)
++ theme(panel.grid.major.x = element_blank(), panel.grid.minor.x =
+element_blank()) + theme_minimal()</p>
+<h1 id="create-histogram-5">Create histogram</h1>
+<p>hist_page &lt;- ggplot(data = df_eda, aes(x = PageValues, fill =
+Revenue_label)) + geom_histogram(position = “identity”, alpha = 0.6) +
+scale_fill_manual(values = c(“No Revenue” = “lightblue”, “Revenue” =
+“darkblue”)) + labs(title = “Page Values by Revenue”, x = “Page Values”,
+y = “Count”, fill = “Revenue”) + theme_minimal()</p>
+<h1 id="display-plots-4">display plots</h1>
+<p>plot_page + hist_page + plot_layout(ncol = 2) &amp; theme(plot.title
+= element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display page values plots, echo=FALSE, fig.width = 8.5, fig.asp = 0.4}
+# display plots
+plot_page + hist_page + plot_layout(ncol = 2) &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>The scatterplot on the left shows how page values relate to the
+likelihood of generating revenue. The probability of visitors making a
+purchase is low for very low page values but increases drastically with
+higher page values. The histogram on the right shows how page values
+differ between visitors who made a purchase and those who did not. Most
+visitors who ended up not buying anything visited pages with low values.
+On the other hand, visitors who made a purchase visited pages with
+higher values. This indicates that visitors who visit pages with higher
+values are more likely to generate revenue.</p>
+<h3 id="month">Month</h3>
+<details>
+<summary>
+<em>Click to see the code to create the barplot for Month</em>
+</summary>
+<p>```{r code month plot, fig.show=‘hide’} # ensure Month is correctly
+ordered df_eda<span
+class="math inline"><em>M</em><em>o</em><em>n</em><em>t</em><em>h</em> &lt; −<em>f</em><em>a</em><em>c</em><em>t</em><em>o</em><em>r</em>(<em>d</em><em>f</em><sub><em>e</em></sub><em>d</em><em>a</em></span>Month,
+levels = c(“Feb”, “Mar”, “May”, “June”, “Jul”, “Aug”, “Sep”, “Oct”,
+“Nov”, “Dec”))</p>
+<h1 id="create-barchart">create barchart</h1>
+<p>plot_month &lt;- ggplot(df_eda, aes(x = Month, fill = Revenue_label))
++ geom_bar(position = “stack”, width = 0.6, alpha = 0.6) + # Ensure
+‘width’ is correct scale_fill_manual(values = c(“No Revenue” =
+“lightblue”, “Revenue” = “darkblue”)) + labs(title = “Revenue by Month”,
+x = “Month”, y = “Count”, fill = “Revenue”) + theme(panel.grid.major.x =
+element_blank(), panel.grid.minor.x = element_blank()) +
+theme_minimal()</p>
+<h1 id="display-plot">display plot</h1>
+<p>plot_month &amp; theme(plot.title = element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display month plot, echo=FALSE, fig.width = 8.5, fig.asp = 0.4}
+# display plot
+plot_month  &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>Looking at the relationship between month and revenue, there are some
+noticeable differences both in terms of overall visits and visits
+resulting in revenue. November generated the highest revenue, followed
+by May, December and March. This might be related to gift-buying for
+holidays like Christmas and Easter, and the peak in November might be
+related to major shopping events such as Black Friday and Cyber Monday.
+Since the data covers only a single year, it is difficult to identify
+seasonal patterns.</p>
+<h3 id="visitor-type">Visitor Type</h3>
+<details>
+<summary>
+<em>Click to see the code to create the barplot for VisitorType</em>
+</summary>
+<p>```{r code visitor type plot, fig.show=‘hide’} # create barchart
+plot_visitors &lt;- ggplot(df_eda, aes(x = VisitorType, fill =
+Revenue_label)) + geom_bar(position = “stack”, width = 0.6, alpha = 0.6)
++ # Ensure ‘width’ is correct scale_fill_manual(values = c(“No Revenue”
+= “lightblue”, “Revenue” = “darkblue”)) + labs(title = “Revenue by
+Visitor Type”, x = “Visitor Type”, y = “Count”, fill = “Revenue”) +
+theme(panel.grid.major.x = element_blank(), panel.grid.minor.x =
+element_blank()) + theme_minimal()</p>
+<h1 id="display-plot-1">display plot</h1>
+<p>plot_visitors &amp; theme(plot.title = element_text(size = 13))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r display visitor type plot, echo=FALSE, fig.width = 8.5, fig.asp = 0.4}
+# display plot
+plot_visitors &amp;
+  theme(plot.title = element_text(size = 13))</code></pre>
+<p>Looking at the relationship between month and visitor type, there is
+a large differences both in terms of overall visits and visits resulting
+in revenue. Overall, there were significantly more returning visitors,
+but they were less likely to actually make a purchase. On the other
+hand, there were fewer new visitors, but they were more likely to make a
+purchase. This suggests that new visitors are more likely to buy, while
+returning visitors tend to browse more without completing a
+purchase.</p>
+<p><code>{r eda clean environment, include=FALSE} rm(list = ls(pattern = "plot")) rm(list = ls(pattern = "hist"))</code></p>
+<p>``<code>{r set up model comparison, include=FALSE} # prepare data frame for metrics model_comparison &lt;- data.frame(   Model = character(),</code>Target
+Variable<code>= character(),   Accuracy = numeric(),   Sensitivity = numeric(),   Specificity = numeric(),   AUC = numeric(),   AIC = numeric(),</code>R-squared`
+= numeric() )</p>
+<h1 id="define-function-to-add-new-model-to-data-frame">define function
+to add new model to data frame</h1>
+<p>add_model_comparison &lt;- function(model, targetvar, acc = NA, sens
+= NA, spec = NA, auc = NA, aic = NA, r2 = NA) { new_row &lt;-
+data.frame( Model = model, <code>Target Variable</code> = targetvar,
+Accuracy = acc, Sensitivity = sens, Specificity = spec, AUC = auc, AIC =
+aic, <code>R-squared</code> = r2 ) assign(“model_comparison”,
+rbind(model_comparison, new_row), envir = .GlobalEnv) }</p>
+<pre><code>
+# Linear Model
+
+Our target variable *Revenue* is binary and therefore violates key
+assumptions of linear regression. Since *Revenue* showed the largest
+correlation with the continuous variable *PageValues*, we decided to use it
+as target variable for our linear model. *PageValues* is an estimate of
+how much a page contributes to revenue during a shopping session. This
+helps to not just predict immediate sales but also future purchasing
+potential. Since *PageValues* is an amount and its distribution heavily
+right skewed, log-transformation was necessary. Due to *PageValues*
+containing zero values, *log(y + 1)* was used to ensure that all values are
+positive and can be log-transformed.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code for the linear regression
+model*&lt;/summary&gt;
+
+```{r linear regression analysis for PageValues}
+# define linear regression model
+lm.page.values &lt;- lm(log(PageValues + 1) ~ Administrative + Administrative_Duration +
+                       Informational + Informational_Duration + ProductRelated +
+                       ProductRelated_Duration + BounceRates + ExitRates +
+                       SpecialDay + Month + OperatingSystems + Browser + Region +
+                       TrafficType + VisitorType + Weekend + Revenue, data = df)
+
+lm_summary &lt;- summary(lm.page.values)
+lm_summary</code></pre>
+</details>
+<p>```{r linear regression analysis for PageValues summary, echo=FALSE}
+# get coefficients and p-values coef_table &lt;- lm_summary$coefficients
+sig_coef &lt;- coef_table[coef_table[, 4] &lt; 0.05, ]</p>
+<h1 id="get-r-squared-and-significant-coefficients">get R squared and
+significant coefficients</h1>
+<p>r_squared &lt;- lm_summary<span
+class="math inline"><em>r</em>.<em>s</em><em>q</em><em>u</em><em>a</em><em>r</em><em>e</em><em>d</em><em>r</em><em>s</em><em>e</em> &lt; −<em>l</em><em>m</em><sub><em>s</em></sub><em>u</em><em>m</em><em>m</em><em>a</em><em>r</em><em>y</em></span>sigma</p>
+<p>cat(“Significant Predictors (p &lt; 0.05):”) print(sig_coef)
+cat(“R-squared:”, r_squared, “”) cat(“Residual Standard Error (RSE):”,
+rse, “”)</p>
+<pre><code>
+**Intercept (Estimate: 0.2016, p \&lt; .01)** The intercept indicates that
+if in the context of the linear model all predictor variables were set
+to zero, the expected average log-transformed *PageValues* would be 0.20.
+While this this might not represent a realistic scenario in practice,
+it serves as a reference point in the model for predictions.
+
+In order to keep this report concise we will only look at the
+interpretation of some selected predictor variables.
+
+**Administrative (Estimate: 0.0493, p \&lt; .001)**
+For each additional administrative page viewed, the average log-transformed
+*PageValues* is expected to increase by 0.049, assuming all other variables
+remain constant. This suggests that administrative pages may contribute
+positively to user engagement or conversion.
+
+**Informational (Estimate: 0.0253, p \&lt; .01)**
+For each additional informational page visited, the average log-transformed
+*PageValues* is expected to increase by 0.025, holding all other predictors
+constant. This indicates a small but statistically significant positive
+association between informational content and the *PageValues*.
+
+**Product Related (Estimate: -0.0012, p \&lt; .01)** For each additional
+unit increase in the number of product-related pages visited, the average
+log-transformed *PageValues* is expected to decrease by 0.0012, if all
+other predictors are kept constant. This could indicate that, on average,
+more product-related interactions correlate with a slight reduction in
+the *PageValues*. Yet this result is surprising since the variables 
+*ProductRelated* and *PageValues* showed a weak positive correlation (cor =
+0.06) in the initial exploratory analysis. This difference could be due
+to multicollinearity between the variables within the linear model.
+
+**Bounces Rates (Estimate: 3.8905, p \&lt; .001)** For each unit increase in
+*BounceRates*, the average log-transformed *PageValues* is expected to
+increase by 3.89. Since the bounce rate changes in much smaller
+increments in our data, we could as well say that each percentage
+point increase in *BounceRates* corresponds to an increases of 0.0389 in
+$log(PageValues + 1)$, if all other predictors are kept constant. This
+suggests that shopping sessions with higher bounce rates tend to have
+higher page values, which could reflect more engagement in those
+sessions.
+
+**Exit Rates (Estimate: -5.7287, p \&lt; .001)** For each unit increase in
+*ExitRates*, the average log-transformed *PageValues* is expected to decrease
+by 5.73, holding all other variables constant. On average, higher *ExitRates* 
+are associated with lower *PageValues*. This reflects the lack of
+further engagement after a user exits the page.
+
+**Special Day (Estimate: -0.2143, p \&lt; .001)** Shopping sessions occurring
+closer to a *SpecialDay* are associated with a decrease of 0.21 in
+*log(PageValues + 1)*. This suggests that visits around special days may be
+less likely to generate value.
+
+**VisitorType: Returning Visitor (Estimate: 0.0981, p \&lt; .01)** Compared
+to new visitors, returning visitors are associated with a 0.098 increase
+in log-transformed *PageValues*, holding all other variables constant. This
+implies that returning visitors tend to create a slightly higher average
+*PageValues*.
+
+**Revenue (Estimate: 2.0993, p \&lt; .001)** Sessions resulting
+in *Revenue* are associated with a 2.10 increase in *log(PageValues + 1)*
+compared to non-purchase sessions. This highlights the strong
+relationship between *Revenue* and *PageValues*.
+
+**R-squared (0.452)** About 45.2% of the variance in the log-transformed
+*PageValues* is explained by the model. While many predictors contribute
+significantly to the explanatory power of the model, there remains over
+50% of unexplained variance.
+
+**Residual Standard Error (0.9407)** The Residual Standard Error (RSE)
+indicates how far off the predictions of our model are from the actual
+log-transformed *PageValues*. The RSE of 0.941 suggests a decent model fit
+given the log transformation and skewness of the original *PageValues*.
+
+To assess each predictors individual contribution to the model and
+potentially simplify it by retaining only the variables that
+significantly improve the prediction of *PageValues*, we used the
+*drop1()* function with an F-test.
+
+```{r linear regression differences in fit between models}
+drop1(lm.page.values, test = &quot;F&quot;)</code></pre>
+<p><strong>Key Observations</strong> The predictors
+<em>Administrative</em>, <em>Informational</em>,
+<em>ProductRelated</em>, <em>BounceRates</em>, <em>ExitRates</em>,
+<em>SpecialDay</em>, <em>TrafficType</em>, <em>VisitorType</em> and
+<em>Revenue</em> are statistically significant and contribute to the
+model since removing either of them would result in an increase in the
+residual sum of squares (RSS).</p>
+<p>The predictor <em>Month</em> is statistically significant as well,
+yet our linear regression model showed that out of its nine levels, only
+May was significant. Despite the increase in the RSS, the model
+performance does not change dramatically. The predictor
+<em>OperatingSystems</em> is also significant, in the linear model only
+the <em>OperatingSystems</em> 2, 4 and 6 seem to make a statistically
+significant difference.</p>
+<p>The remaining variables seem to not have much of an impact on the
+model performance showing only a minimal increase in the RSS and
+p-values greater than 0.05.</p>
+<p>```{r linear regression model evaluation, include = FALSE, echo =
+FALSE} # extract metrics lm_r2 &lt;- lm_summary$r.squared lm_aic &lt;-
+AIC(lm.page.values)</p>
+<h1 id="fill-in-lm-for-model-comparison-at-the-end">fill in LM for model
+comparison at the end</h1>
+<p>add_model_comparison(model = “Linear Model”, targetvar =
+“log(PageValues)”, r2 = lm_r2, aic = lm_aic)</p>
+<pre><code>
+*Valérie Lüthi took the lead in the Linear Model section.*
+
+# Generalised Additive Models
+
+Using all possible predictors to predict *Revenue*, a full generalized
+additive model (GAM) was fit allowing for smoothing in all numerical
+variables. As only a part of the variables were significant, a smaller
+model was fit containing only the significant variables while still
+allowing for smoothing in all numerical variables. As the effect of the
+smoothing term for *BounceRates* is almost significant, we keep it in
+the reduced model, where its effect becomes significant.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the full GAM model*&lt;/summary&gt;
+
+```{r GAM full, cache=TRUE}
+# full GAM model
+gam_full &lt;- gam(Revenue ~ s(Administrative) + s(Administrative_Duration) +
+                 s(Informational) + s(Informational_Duration) +
+                 s(ProductRelated) + s(ProductRelated_Duration) +
+                 s(BounceRates) + s(ExitRates) + s(PageValues) + SpecialDay +
+                 Month + OperatingSystems + Browser + Region + TrafficType +
+                 VisitorType + Weekend,
+               family = binomial, data = df)
+summary(gam_full)</code></pre>
+</details>
+<details>
+<summary>
+<em>Click to see the reduced GAM model</em>
+</summary>
+<p><code>{r GAM reduced, cache=TRUE} # reduced GAM model with only significant variables from GAM full gam_reduced &lt;- gam(Revenue ~ s(Administrative) + s(ProductRelated_Duration) +                  s(BounceRates) + s(ExitRates) + s(PageValues) +                  Month + Browser + TrafficType + VisitorType,                family = binomial, data = df) summary(gam_reduced)</code></p>
+</details>
+<p>Looking at the estimated degree of freedom for the smoothing terms in
+the smaller model, <em>Administrative</em> displayed an almost linear
+effect and was thus modeled with a linear term in the final GAM model.
+As only one level of <em>Browser</em> showed a significant effect in the
+GAM, we decided to remove it for a simpler model. This decision was
+supported by a lower AIC for the simple GAM model.</p>
+<details>
+<summary>
+<em>Click to see the simple GAM model</em>
+</summary>
+<p>```{r GAM simple code, cache=TRUE} # reduced GAM model dropping
+Browser due to ANOVA gam_simple &lt;- gam(Revenue ~ Administrative +
+s(ProductRelated_Duration) + s(BounceRates) + s(ExitRates) +
+s(PageValues) + Month + TrafficType + VisitorType, family = binomial,
+data = df)</p>
+<p>AIC(gam_full, gam_reduced, gam_simple)</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r GAM simple output, echo=FALSE}
+summary(gam_simple)</code></pre>
+<h2 id="interpretation">Interpretation</h2>
+<p>Our GAM model is a logistic regression and thus predicts changes in
+log-odds of the outcome which are difficult to interpret. Taking the
+exponentiation of the estimates transforms the log-odds into odds ratio,
+which can be expressed as percentages and are more intuitive to
+understand. The significant predictors of the model can be interpreted
+as follows while holding all other variables constant.</p>
+<details>
+<summary>
+<em>Click to see the significant effects in percentage</em>
+</summary>
+<p>```{r GAM coefficients} ## Calculate coefficients as percentage
+change in odds</p>
+<h1 id="extract-coefficient-information-and-filter-by-p-value">extract
+coefficient information and filter by p-value</h1>
+<p>gam_coef &lt;- as.data.frame(summary(gam_simple)$p.table) gam_coef
+&lt;- gam_coef[gam_coef[“Pr(&gt;|z|)”] &lt; 0.05, ]</p>
+<h1 id="calculate-percentage-effect-expestimate---1-100">calculate
+percentage effect (exp(estimate) - 1) * 100</h1>
+<p>gam_coef<span
+class="math inline"><em>P</em><em>e</em><em>r</em><em>c</em><em>e</em><em>n</em><em>t</em><em>E</em><em>f</em><em>f</em><em>e</em><em>c</em><em>t</em> &lt; −<em>r</em><em>o</em><em>u</em><em>n</em><em>d</em>((<em>e</em><em>x</em><em>p</em>(<em>g</em><em>a</em><em>m</em><sub><em>c</em></sub><em>o</em><em>e</em><em>f</em></span>Estimate)
+- 1) * 100, 2)</p>
+<h1
+id="adjust-intercept-calculated-as-expintercept-1-expintercept">adjust
+intercept, calculated as exp(intercept) / (1 + exp(intercept))</h1>
+<p>gam_coef[“(Intercept)”,“PercentEffect”] &lt;- round(
+exp(gam_coef[“(Intercept)”, “Estimate”]) / (1 +
+exp(gam_coef[“(Intercept)”, “Estimate”])) * 100, 2)</p>
+<h1 id="round-results">round results</h1>
+<p>gam_coef &lt;- round(gam_coef[,c(“Estimate”, “Pr(&gt;|z|)”,
+“PercentEffect”)], 4) gam_coef</p>
+<pre><code>
+&lt;/details&gt;
+
+**Intercept (Estimate: -1.8244, p \&lt; .001)** The intercept indicates
+that if all continuous predictors are set to zero, the expected odds of
+*Revenue* would be on average 14% in *August* for a *New_Visitor* with
+*TrafficType1*.
+
+**Administrative (Estimate: -0.0566, p \&lt; .001)** For each additional
+unit of *Administrative*, the odds of *Revenue* decrease on average by
+5.5%. This suggests that increased engagement with administrative pages
+is associated with slightly lower odds of generating revenue.
+
+**Month** Compared to *August*, the odds of *Revenue* are on average 53%
+lower in *December*, 82% lower in *February*, 48% lower in *March*, 55%
+lower in *May*, and 62% higher in *November.* This indicates that
+relative to August, November is associated with the highest odds of
+generating revenue and February with the lowest.
+
+**TrafficType** Compared to *TrafficType1*, the odds of *Revenue* are on
+average 29% higher for *TrafficType2*, 103% higher for *TrafficType8*,
+64% higher for *TrafficType10*, 87% higher for *TrafficType11*, 39%
+lower for *TrafficType13*, 1489% higher for *TrafficType16* and 91%
+higher for *TrafficType20*. Looking at the data, there are only three
+observations for *TrafficType16* with a percentage of revenue of 33.3%,
+which is the highest among all traffic types (with an average of 14%).
+Thus, this result should be interpreted with caution.
+
+```{r GAM TraffiCType, include=FALSE}
+# calculate revenue by traffic type
+df %&gt;%
+  group_by(TrafficType) %&gt;%
+  summarise(Total = n(),
+            Revenue = sum(Revenue == &quot;TRUE&quot;),
+            RevenuePercentage = round(Revenue / Total * 100, 2),) %&gt;%
+  arrange(desc(RevenuePercentage))</code></pre>
+<p><strong>VisitorType</strong> Compared to a <em>New_Visitor</em>, the
+odds of <em>Revenue</em> are on average 43% lower for a
+<em>Returning_Visitor</em>. This suggests that returning visitors are
+significantly less likely to make a purchase compared to new
+visitors.</p>
+<p><strong>s(ProductRelated_Duration) (edf: 4.247, p &lt; .001)</strong>
+<em>ProductRelated_Duration</em> has a strong, complex non-linear effect
+on <em>Revenue</em>. There is a positive effect on the log-odds of
+revenue for a duration of up to about 35’000 seconds with a peak at
+around 15’000 seconds. After 35’000 seconds, the effect on the log-odds
+of revenue is negative and continues to decrease gradually as duration
+increases. This suggests that visitors who spend a moderate amount of
+time on product pages are more likely to make a purchase, while a very
+long duration may reflect hesitation to make a purchase.</p>
+<p><strong>s(PageValues) (edf: 8.861, p &lt; .001)</strong>
+<em>PageValues</em> has a strong, very complex non-linear relationship
+with <em>Revenue</em>. Page values up to around 250, have a slightly
+positive and relatively stable effect on the log-odds of generating
+revenue. For higher page values, the effect increases sharply. This
+suggests that users visiting pages with higher value are significantly
+more likely to make a purchase.</p>
+<p><strong>s(BounceRates) (edf: 2.500, p &lt; .05)</strong>
+<em>BounceRates</em> has a moderate non-linear effect on
+<em>Revenue</em>. At low bounce rates below around 0.07, the log-odds of
+generating revenue are slightly negative. This may reflect visitors who
+browse multiple pages without a strong intent to buy. As bounce rates
+increase further, the log-odds of generating revenue also increase. This
+suggests that visitors intending to make a purchase leave the website
+quickly after landing on product or checkout pages and completing the
+purchase.</p>
+<p><strong>s(ExitRates) (edf: 5.272, p &lt; .01)</strong>
+<em>ExitRates</em> has a complex non-linear relationship with
+<em>Revenue</em>. Low exit rates until around 0.08 have a slightly
+positive effect on the log-odds of revenue. However, as the average exit
+rate of pages increases, the log-odds of generating revenue decline.
+This suggests that visitors who tend to view pages with high exit rates
+are less likely to complete a purchase.</p>
+<details>
+<summary>
+<em>Click to see the code for the plots of the smooth terms</em>
+</summary>
+<p>```{r GAM plot code, eval=FALSE} par(mfrow = c(1, 2))</p>
+<h1 id="plot-effect-of-productrelated_duration">plot effect of
+ProductRelated_Duration</h1>
+<p>plot.gam(gam_simple, select = 1, main = “Effect of
+ProductRelated_Duration”, ylim = c(-25, 25), cex.main = 1, cex.axis =
+0.75, cex.lab = 0.9) abline(h = 0, col = “darkorange”, lty = 2)</p>
+<h1 id="plot-effect-of-pagevalues">plot effect of PageValues</h1>
+<p>plot.gam(gam_simple, select = 4, main = “Effect of PageValues”, ylim
+= c(0, 310), cex.main = 1, cex.axis = 0.8, cex.lab = 0.9) abline(h = 0,
+col = “darkorange”, lty = 2)</p>
+<h1 id="plot-effect-of-bouncerates">plot effect of BounceRates</h1>
+<p>plot.gam(gam_simple, select = 2, main = “Effect of BounceRates”, ylim
+= c(-10, 10), cex.main = 1, cex.axis = 0.75, cex.lab = 0.9) abline(h =
+0, col = “darkorange”, lty = 2)</p>
+<h1 id="plot-effect-of-exitrates">plot effect of ExitRates</h1>
+<p>plot.gam(gam_simple, select = 3, main = “Effect of ExitRates”, ylim =
+c(-10, 10), cex.main = 1, cex.axis = 0.8, cex.lab = 0.9) abline(h = 0,
+col = “darkorange”, lty = 2)</p>
+<p>par(mfrow = c(1, 1))</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r GAM plot output, echo=FALSE, fig.width=8, fig.asp=0.8}
+par(mfrow = c(2, 2))
+
+# plot effect of ProductRelated_Duration
+plot.gam(gam_simple, select = 1, main = &quot;Effect of ProductRelated_Duration&quot;,
+          ylim = c(-25, 25), cex.main = 1, cex.axis = 0.75, cex.lab = 0.9)
+abline(h = 0, col = &quot;darkorange&quot;, lty = 2)
+
+# plot effect of PageValues
+plot.gam(gam_simple, select = 4, main = &quot;Effect of PageValues&quot;,
+         ylim = c(0, 310), cex.main = 1, cex.axis = 0.8, cex.lab = 0.9)
+abline(h = 0, col = &quot;darkorange&quot;, lty = 2)
+
+# plot effect of BounceRates
+plot.gam(gam_simple, select = 2, main = &quot;Effect of BounceRates&quot;,
+         ylim = c(-10, 10), cex.main = 1, cex.axis = 0.75, cex.lab = 0.9)
+abline(h = 0, col = &quot;darkorange&quot;, lty = 2)
+
+# plot effect of ExitRates
+plot.gam(gam_simple, select = 3, main = &quot;Effect of ExitRates&quot;,
+         ylim = c(-10, 10), cex.main = 1, cex.axis = 0.8, cex.lab = 0.9)
+abline(h = 0, col = &quot;darkorange&quot;, lty = 2)
+
+par(mfrow = c(1, 1))</code></pre>
+<h2 id="model-performance">Model Performance</h2>
+<p>The AIC (Akaike Information Criterion) balances model fit with model
+complexity, penalizing models that include more parameters without
+substantial improvement in explanatory power. The simpler GAM is
+preferred, since it has a lower AIC compared to the full and reduced
+model. The R-squared value indicates that the simple GAM can explain
+around 42.3% of the variance in the log-odds of revenue.</p>
+<p>In terms of predictive performance, the simple GAM achieves a high
+overall accuracy of approximately 89.5%, just below the full GAM with
+89.6%. The model is quite good at predicting sessions that do not lead
+to revenue, as reflected by its high specificity of 95.4%. However, it
+is not so good at predicting sessions that lead to revenue, as reflected
+by a moderate sensitivity of 57.3%.</p>
+<details>
+<summary>
+<em>Click to see the code for the GAM performance metrics</em>
+</summary>
+<p>```{r GAM model evaluation code, results=‘hide’} ## full model #
+create confusion table (TRUE if &gt; 0.5, else FALSE) gam_actual &lt;-
+as.factor(df<span class="math inline">$Revenue)
+gam_full_pred &lt;- predict(gam_full, type = "response")
+gam_full_pred_factor &lt;- as.factor(gam_full_pred &gt; 0.5)
+gam_full_conf &lt;- confusionMatrix(data = gam_full_pred_factor,
+                                 reference = gam_actual, positive =
+"TRUE")
+# extract metrics
+gam_full_acc &lt;- gam_full_conf$</span>overall[“Accuracy”]
+gam_full_sens &lt;- gam_full_conf<span
+class="math inline">$byClass["Sensitivity"]
+gam_full_spec &lt;- gam_full_conf$</span>byClass[“Specificity”]
+gam_full_r2 &lt;- summary(gam_full)<span
+class="math inline"><em>r</em>.<em>s</em><em>q</em><em>g</em><em>a</em><em>m</em><sub><em>f</em></sub><em>u</em><em>l</em><em>l</em><sub><em>a</em></sub><em>i</em><em>c</em> &lt; −<em>A</em><em>I</em><em>C</em>(<em>g</em><em>a</em><em>m</em><sub><em>f</em></sub><em>u</em><em>l</em><em>l</em>)<em>g</em><em>a</em><em>m</em><sub><em>f</em></sub><em>u</em><em>l</em><em>l</em><sub><em>r</em></sub><em>o</em><em>c</em> &lt; −<em>r</em><em>o</em><em>c</em>(<em>d</em><em>f</em></span>Revenue,
+gam_full_pred) # ROC curve gam_full_auc &lt;- auc(gam_full_roc) #
+AUC</p>
+<h2 id="reduced-model">reduced model</h2>
+<h1 id="create-confusion-table-true-if-0.5-else-false">create confusion
+table (TRUE if &gt; 0.5, else FALSE)</h1>
+<p>gam_reduced_pred &lt;- predict(gam_reduced, type = “response”)
+gam_reduced_pred_factor &lt;- as.factor(gam_reduced_pred &gt; 0.5)
+gam_reduced_conf &lt;- confusionMatrix(data = gam_reduced_pred_factor,
+reference = gam_actual, positive = “TRUE”) # extract metrics
+gam_reduced_acc &lt;- gam_reduced_conf<span
+class="math inline">$overall["Accuracy"]
+gam_reduced_sens &lt;- gam_reduced_conf$</span>byClass[“Sensitivity”]
+gam_reduced_spec &lt;- gam_reduced_conf<span
+class="math inline">$byClass["Specificity"]
+gam_reduced_r2 &lt;- summary(gam_reduced)$</span>r.sq gam_reduced_aic
+&lt;- AIC(gam_reduced) gam_reduced_roc &lt;- roc(df$Revenue,
+gam_reduced_pred) # ROC curve gam_reduced_auc &lt;- auc(gam_reduced_roc)
+# AUC</p>
+<h2 id="simple-model">simple model</h2>
+<h1 id="create-confusion-table-true-if-0.5-else-false-1">create
+confusion table (TRUE if &gt; 0.5, else FALSE)</h1>
+<p>gam_simple_pred &lt;- predict(gam_simple, type = “response”)
+gam_simple_pred_factor &lt;- as.factor(gam_simple_pred &gt; 0.5)
+gam_simple_conf &lt;- confusionMatrix(data = gam_simple_pred_factor,
+reference = gam_actual, positive = “TRUE”) # extract metrics
+gam_simple_acc &lt;- gam_simple_conf<span
+class="math inline">$overall["Accuracy"]
+gam_simple_sens &lt;- gam_simple_conf$</span>byClass[“Sensitivity”]
+gam_simple_spec &lt;- gam_simple_conf<span
+class="math inline">$byClass["Specificity"]
+gam_simple_r2 &lt;- summary(gam_simple)$</span>r.sq gam_simple_aic &lt;-
+AIC(gam_simple) gam_simple_roc &lt;- roc(df$Revenue, gam_simple_pred) #
+ROC curve gam_simple_auc &lt;- auc(gam_simple_roc) # AUC</p>
+<h2 id="table-for-gam-model-comparison">table for GAM model
+comparison</h2>
+<p>gam_comparison &lt;- data.frame( Model = c(“GAM full”, “GAM reduced”,
+“GAM simple”), Accuracy = round(c(gam_full_acc, gam_reduced_acc,
+gam_simple_acc), 3), Sensitivity = round(c(gam_full_sens,
+gam_reduced_sens, gam_simple_sens), 3), Specificity =
+round(c(gam_full_spec, gam_reduced_spec, gam_simple_spec), 3), AUC =
+round(c(gam_full_auc, gam_reduced_auc, gam_simple_auc), 3), AIC =
+round(c(gam_full_aic, gam_reduced_aic, gam_simple_aic)),
+<code>R-squared</code> = round(c(gam_full_r2, gam_reduced_r2,
+gam_simple_r2), 3) )</p>
+<p>kable(gam_comparison, booktabs = TRUE, align=‘c’, row.names = FALSE)
+%&gt;% kable_styling(font_size = 12, bootstrap_options = c(“striped”,
+“condensed”))</p>
+<h2 id="fill-in-simple-gam-for-model-comparison-at-the-end">fill in
+simple GAM for model comparison at the end</h2>
+<p>add_model_comparison(model = “GAM (simple)”, targetvar = “Revenue”,
+acc = gam_simple_acc, sens = gam_simple_sens, spec = gam_simple_spec,
+auc = gam_simple_auc, aic = gam_simple_aic, r2 = gam_simple_r2)</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r GAM model comparison output, echo=FALSE}
+# print table
+kable(gam_comparison, booktabs = TRUE, align=&#39;c&#39;, row.names = FALSE) %&gt;%
+  kable_styling(font_size = 12, bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<p><code>{r GAM clean environment, include=FALSE} rm(list = ls(pattern = "gam_full_")) rm(list = ls(pattern = "gam_reduced_")) rm(list = ls(pattern = "gam_simple_")) rm(gam_actual)</code></p>
+<p><em>Fabienne Bölsterli took the lead in the GAM section.</em></p>
+<h1 id="generalised-linear-models-binomial">Generalised Linear Models:
+Binomial</h1>
+<p>Using all possible predictors to predict <em>Revenue</em>, a full
+generalized linear model (GLM) for binomial data was fit. As only a part
+of the variables were significant, a smaller model was fit containing
+only the significant variables.</p>
+<details>
+<summary>
+<em>Click to see the full binomial GLM</em>
+</summary>
+<p><code>{r GLM binomial full} # full model with all predictors glmb_full &lt;- glm(Revenue ~ Administrative + Administrative_Duration +                  Informational + Informational_Duration +                  ProductRelated + ProductRelated_Duration +                  BounceRates + ExitRates + PageValues + SpecialDay +                  Month + OperatingSystems + Browser + Region + TrafficType +                  VisitorType + Weekend,                family = binomial, data = df) summary(glmb_full)</code></p>
+</details>
+<details>
+<summary>
+<em>Click to see the reduced binomial GLM</em>
+</summary>
+<p><code>{r GLM binomial reduced} # reduced model with only significant predictors glmb_reduced &lt;- glm(Revenue ~ ProductRelated_Duration + ExitRates + PageValues +                     Month + Browser + TrafficType + VisitorType,                family = binomial, data = df) summary(glmb_reduced)</code></p>
+</details>
+<p>As only one level of <em>Browser</em> showed a significant effect in
+the binomial GLM, we decided to remove it for a simpler model. The
+simple model has a smaller AIC, which supports our decision.</p>
+<details>
+<summary>
+<em>Click to see the simple binomial GLM model</em>
+</summary>
+<p>```{r GLM binomial simple code} # simple model with only significant
+predictors minus Browser glmb_simple &lt;- glm(Revenue ~
+ProductRelated_Duration + ExitRates + PageValues + Month + TrafficType +
+VisitorType, family = binomial, data = df)</p>
+<p>AIC(glmb_full, glmb_reduced, glmb_simple)</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r GLM binomial simple output, echo=FALSE}
+summary(glmb_simple)</code></pre>
+<h2 id="interpretation-1">Interpretation</h2>
+<p>The binomial GLM is again a logistic regression, predicting changes
+in log-odds of the outcome which are difficult to interpret. Taking the
+exponentiation of the estimates transforms the log-odds into odds ratio,
+which can be expressed as percentages and are more intuitive to
+understand. The significant predictors of the model can be interpreted
+as follows while holding all other variables constant.</p>
+<details>
+<summary>
+<em>Click to see the significant effects in percentage</em>
+</summary>
+<p>```{r GLM binomial coefficients} ## Calculate coefficients as
+percentage change in odds</p>
+<h1 id="extract-coefficient-information-and-filter-by-p-value-1">extract
+coefficient information and filter by p-value</h1>
+<p>glmb_coef &lt;- as.data.frame(summary(glmb_simple)$coef) glmb_coef
+&lt;- glmb_coef[glmb_coef[“Pr(&gt;|z|)”] &lt; 0.05, ]</p>
+<h1 id="calculate-percentage-effect-expestimate---1-100-1">calculate
+percentage effect (exp(estimate) - 1) * 100</h1>
+<p>glmb_coef<span
+class="math inline"><em>P</em><em>e</em><em>r</em><em>c</em><em>e</em><em>n</em><em>t</em><em>E</em><em>f</em><em>f</em><em>e</em><em>c</em><em>t</em> &lt; −<em>r</em><em>o</em><em>u</em><em>n</em><em>d</em>((<em>e</em><em>x</em><em>p</em>(<em>g</em><em>l</em><em>m</em><em>b</em><sub><em>c</em></sub><em>o</em><em>e</em><em>f</em></span>Estimate)
+- 1) * 100, 2)</p>
+<h1
+id="adjust-intercept-calculated-as-expintercept-1-expintercept-1">adjust
+intercept, calculated as exp(intercept) / (1 + exp(intercept))</h1>
+<p>glmb_coef[“(Intercept)”,“PercentEffect”] &lt;- round(
+exp(glmb_coef[“(Intercept)”, “Estimate”]) / (1 +
+exp(glmb_coef[“(Intercept)”, “Estimate”])) * 100, 2)</p>
+<h1 id="round-results-1">round results</h1>
+<p>glmb_coef &lt;- round(glmb_coef[,c(“Estimate”, “Pr(&gt;|z|)”,
+“PercentEffect”)], 4) glmb_coef</p>
+<pre><code>
+&lt;/details&gt;
+
+**Intercept (Estimate: -1.7627, p \&lt; .001)** The intercept indicates
+that if all continuous predictors are set to zero, the expected odds of
+*Revenue* would be on average 14.7% in *August* for a *New_Visitor* with
+*TrafficType1*.
+
+**ProductRelated_Duration (Estimate: 0.0001, p \&lt; .001)** For each
+additional unit of *ProductRelated_Duration*, the odds of *Revenue*
+increase on average by 0.01%. This indicates that a longer duration on
+product-related web pages is associated with increased odds of
+generating revenue, it increases by 0.01% per second.
+
+**ExitRates (Estimate: -16.8234, p \&lt; .001)** For each additional unit
+of *ExitRate*, the odds of *Revenue* decrease dramatically by almost
+100% This suggests that visitors who visit pages with high exit rates
+are extremely unlikely to generate revenue.
+
+**PageValues (Estimate: 0.0815, p \&lt; .001)** For every additional unit
+of *PageValues*, the odds of *Revenue* increase on average by 8.5%. This
+suggests that visiting more high-value pages is associated with
+increased odds of generating revenue.
+
+**Month** Compared to *August*, the odds of *Revenue* are on average 52%
+lower in *December*, 83% lower in *February*, 45% lower in *March*, 43%
+lower in *May*, and 55% higher in *November*. This indicates that
+relative to August, November is associated with the highest odds of
+generating revenue and February with the lowest.
+
+**TrafficType** Compared to *TrafficType1*, the odds of *Revenue* are on
+average 22% lower for *TrafficType3*, 77% higher for *TrafficType8*, 42%
+higher for *TrafficType10* and 45% lower for *TrafficType13.*
+
+**VisitorType** Compared to a *New_Visitor*, the odds of *Revenue* are
+on average 18.1% lower for a *Returning_Visitor.* This suggests that
+returning visitors are significantly less likely to generate revenue
+compared to new visitors.
+
+## Model Performance
+
+Comparing the models using AIC, the simple binomial GLM has the lowest
+AIC. This indicates a better balance of fit and complexity compared to
+the full and reduced binomial GLM model.
+
+In terms of predictive performance, the simple binomial GLM achieves a
+high overall accuracy of approximately 88.5%, which is only slightly
+below that of the full binomial GLM with 88.6%. The model is quite good
+at predicting sessions that do not lead to revenue, as reflected by its
+very high specificity of 97.7%. However, it is bad at predicting
+sessions that lead to revenue, as reflected by a low sensitivity of
+38.7%.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code for the binomial GLM performance
+metrics*&lt;/summary&gt;
+
+```{r GLM binomial model evaluation code, results=&#39;hide&#39;}
+## full model
+# create confusion table (TRUE if &gt; 0.5, else FALSE)
+glmb_actual &lt;- as.factor(df$Revenue)
+glmb_full_pred &lt;- predict(glmb_full, type = &quot;response&quot;)
+glmb_full_pred_factor &lt;- as.factor(glmb_full_pred &gt; 0.5)
+glmb_full_conf &lt;- confusionMatrix(data = glmb_full_pred_factor,
+                                    reference = glmb_actual, positive = &quot;TRUE&quot;)
+# extract metrics
+glmb_full_acc &lt;- glmb_full_conf$overall[&quot;Accuracy&quot;]
+glmb_full_sens &lt;- glmb_full_conf$byClass[&quot;Sensitivity&quot;]
+glmb_full_spec &lt;- glmb_full_conf$byClass[&quot;Specificity&quot;]
+glmb_full_aic &lt;- AIC(glmb_full)
+glmb_full_roc &lt;- roc(df$Revenue, glmb_full_pred) # ROC curve
+glmb_full_auc &lt;- auc(glmb_full_roc) # AUC
+
+## reduced model
+# create confusion table (TRUE if &gt; 0.5, else FALSE)
+glmb_reduced_pred &lt;- predict(glmb_reduced, type = &quot;response&quot;)
+glmb_reduced_pred_factor &lt;- as.factor(glmb_reduced_pred &gt; 0.5)
+glmb_reduced_conf &lt;- confusionMatrix(data = glmb_reduced_pred_factor,
+                                    reference = glmb_actual, positive = &quot;TRUE&quot;)
+# extract metrics
+glmb_reduced_acc &lt;- glmb_reduced_conf$overall[&quot;Accuracy&quot;]
+glmb_reduced_sens &lt;- glmb_reduced_conf$byClass[&quot;Sensitivity&quot;]
+glmb_reduced_spec &lt;- glmb_reduced_conf$byClass[&quot;Specificity&quot;]
+glmb_reduced_aic &lt;- AIC(glmb_reduced)
+glmb_reduced_roc &lt;- roc(df$Revenue, glmb_reduced_pred) # ROC curve
+glmb_reduced_auc &lt;- auc(glmb_reduced_roc) # AUC
+
+## simple model
+# create confusion table (TRUE if &gt; 0.5, else FALSE)
+glmb_simple_pred &lt;- predict(glmb_simple, type = &quot;response&quot;)
+glmb_simple_pred_factor &lt;- as.factor(glmb_simple_pred &gt; 0.5)
+glmb_simple_conf &lt;- confusionMatrix(data = glmb_simple_pred_factor,
+                                    reference = glmb_actual, positive = &quot;TRUE&quot;)
+# extract metrics
+glmb_simple_acc &lt;- glmb_simple_conf$overall[&quot;Accuracy&quot;]
+glmb_simple_sens &lt;- glmb_simple_conf$byClass[&quot;Sensitivity&quot;]
+glmb_simple_spec &lt;- glmb_simple_conf$byClass[&quot;Specificity&quot;]
+glmb_simple_aic &lt;- AIC(glmb_simple)
+glmb_simple_roc &lt;- roc(df$Revenue, glmb_simple_pred) # ROC curve
+glmb_simple_auc &lt;- auc(glmb_simple_roc) # AUC
+
+
+## table for GLM model comparison
+glm_comparison &lt;- data.frame(
+  Model = c(&quot;GLM Binomial full&quot;, &quot;GLM Binomial reduced&quot;, &quot;GLM Binomial simple&quot;),
+  Accuracy = round(c(glmb_full_acc, glmb_reduced_acc, glmb_simple_acc), 3),
+  Sensitivity = round(c(glmb_full_sens, glmb_reduced_sens, glmb_simple_sens), 3),
+  Specificity = round(c(glmb_full_spec, glmb_reduced_spec, glmb_simple_spec), 3),
+  AUC = round(c(glmb_full_auc, glmb_reduced_auc, glmb_simple_auc), 3),
+  AIC = round(c(glmb_full_aic, glmb_reduced_aic, glmb_simple_aic))
+)
+
+kable(glm_comparison, booktabs = TRUE, align=&#39;c&#39;, row.names = FALSE) %&gt;%
+  kable_styling(font_size = 12, bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))
+
+
+## fill in simple GAM for model comparison at the end
+add_model_comparison(model = &quot;GLM Binomial (simple)&quot;, targetvar = &quot;Revenue&quot;,
+                     acc = glmb_simple_acc, sens = glmb_simple_sens,
+                     spec = glmb_simple_spec, auc = glmb_simple_auc,
+                     aic = glmb_simple_aic)</code></pre>
+</details>
+<p><code>{r GLM binomial model comparison output, echo=FALSE} # print table kable(glm_comparison, booktabs = TRUE, align='c', row.names = FALSE) %&gt;%   kable_styling(font_size = 12, bootstrap_options = c("striped", "condensed"))</code></p>
+<p><code>{r GLM binomial clean environment, include = FALSE, echo = FALSE} rm(list = ls(pattern = "glmb_full_")) rm(list = ls(pattern = "glmb_reduced_")) rm(list = ls(pattern = "glmb_simple_")) rm("glmb_actual")</code></p>
+<p><em>Fabienne Bölsterli took the lead in the GLM Binomial
+section.</em></p>
+<h1 id="generalised-linear-models-poisson">Generalised Linear Models:
+Poisson</h1>
+<p>For a generalized linear model following the Poisson Regression, we
+need output variables that are non negative. Hence, only the variables
+<em>Administrative</em>, <em>Informational</em> and
+<em>ProductRelated</em> can be considered as they are the only true
+count variables that do not violate the Poisson conditions:</p>
+<p><span
+class="math display"><em>Y</em> ∈ {0, 1, 2, …},  Var(<em>Y</em>) = 𝔼(<em>Y</em>).</span></p>
+<p>In a first step, we look at how the variance of those three variables
+compares to their mean, as the a Poisson model assumes they are
+equal.</p>
+<p><span
+class="math display">𝔼(<em>Y</em>) = <em>λ</em>,  Var(<em>Y</em>) = <em>λ</em></span></p>
+<p><strong>Dispersion</strong></p>
+<p><code>{r PoissonOutcomeVariables1, echo=FALSE} # Mean vs. Variance sapply(df[, c("Administrative", "Informational", "ProductRelated")],         function(x) c(Mean = mean(x), Variance = var(x)))</code></p>
+<p><code>{r PoissonOutcomeVariables2, include=FALSE} prop.table(table(df$Informational == 0)) prop.table(table(df$Administrative == 0))</code></p>
+<p>Clearly, there is overdispersion across all three variables
+(<em>Administrative</em>: 11 &gt; 2.3, <em>Informational</em>: 1.6 &gt;
+0.5, <em>ProductRelated</em>: 1978.1 &gt; 31.7), indicating that there
+are additional factors or patterns that a Poisson model cannot account
+for.</p>
+<p>However, for the purpose of this project, we continue with performing
+a GLM Poisson using <em>Administrative</em> as the outcome variable.
+This decision is based on the fact that <em>ProductRelated</em> shows
+the highest level of overdispersion by far and <em>Informational</em>,
+although less dispersed, takes the value 0 in nearly 80% of
+observations, which could lead to a zero-inflated model.
+<em>Administrative</em>, on the other hand, has a moderate level of
+dispersion and a relatively balanced count distribution.</p>
+<details>
+<summary>
+<em>Click to see the Poisson GLM</em>
+</summary>
+<p>```{r fit-poisson} # Poisson GLM with “Administrative” as outcome
+variable poisson_admin &lt;- glm( Administrative ~
+Administrative_Duration + Informational + Informational_Duration +
+ProductRelated + ProductRelated_Duration + BounceRates + ExitRates +
+SpecialDay + Month + OperatingSystems + Browser + Region + TrafficType +
+VisitorType + Weekend + Revenue, family = poisson(link = “log”), data =
+df ) summary(poisson_admin)</p>
+<h1 id="check-for-overdispersion">Check for overdispersion</h1>
+<h1 id="deviance-based">Deviance-based</h1>
+<p>disp_deviance &lt;- deviance(poisson_admin) /
+df.residual(poisson_admin) # Pearson-based pearson_resid &lt;-
+residuals(poisson_admin, type = “pearson”) disp_pearson &lt;-
+sum(pearson_resid^2) / df.residual(poisson_admin)</p>
+<p>cat(“Deviance/df =”, round(disp_deviance, 2), “”) cat(“Pearson stat
+=”, round(disp_pearson, 2), “”)</p>
+<pre><code>
+&lt;/details&gt;
+
+The GLM Poisson on the *Administrative* count showed highly significant
+predictors such as *Administrative_Duration*, *Informational*,
+*ProductRelated*, *BounceRates* and *ExitRates*. However, it also shows
+strong overdispersion (deviance/df $\approx$ 2.51; Pearson $\chi^2$/df
+$\approx$ 2.58), violating the Poisson assumption that *Var(Y) = E(Y)*.
+
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code to plot the residuals against fitted values*&lt;/summary&gt;
+
+```{r code plot Poisson, eval=FALSE}
+#Deviance residuals vs. fitted values
+plot(fitted(poisson_admin),
+     residuals(poisson_admin, type = &quot;pearson&quot;),
+     main = &quot;Poisson Pearson Residuals vs Fitted&quot;,
+     xlab = &quot;Fitted values&quot;,
+     ylab = &quot;Pearson residuals&quot;,
+     col  = &quot;lightblue&quot;,
+     pch  = 16)
+abline(h = 0, lty = 2)</code></pre>
+</details>
+<p><code>{r plot Poisson, echo=FALSE, fig.width=5, fig.asp=0.8} #Deviance residuals vs. fitted values plot(fitted(poisson_admin),      residuals(poisson_admin, type = "pearson"),      main = "Poisson Pearson Residuals vs Fitted",      xlab = "Fitted values",      ylab = "Pearson residuals",      col  = "lightblue",      pch  = 16) abline(h = 0, lty = 2)</code></p>
+<p>A visualization of the model predictions against the actual data
+clearly highlights the overdispersion and the poor fit of the Poisson
+model. The data show too much variability and a few extreme outliers for
+the Poisson model to handle. However, since overdispersion is the rule
+rather than the exception when dealing with count data, we allow the
+model to account for it by estimating an additional dispersion parameter
+using a quasi-Poisson GLM.</p>
+<h2 id="glm-quasi-poisson">GLM Quasi-Poisson</h2>
+<p>To address this extra variability, we fit a quasi‐Poisson model,
+which keeps the same structure but scales the variance by an estimated
+dispersion parameter (2.58), widening the margin of error in our
+results. This should reflect the fact that the observed counts vary more
+than a standard Poisson model assumes (<em>Var(Y)/E(Y) = 1</em>).</p>
+<details>
+<summary>
+<em>Click to see quasi-Poisson GLM</em>
+</summary>
+<p><code>{r quasi-poisson} qpoisson_admin &lt;- glm(   Administrative ~ Administrative_Duration +     Informational + Informational_Duration +     ProductRelated + ProductRelated_Duration +     BounceRates + ExitRates + SpecialDay +     Month + OperatingSystems + Browser + Region +     TrafficType + VisitorType + Weekend + Revenue,   family = quasipoisson(link = "log"),   data = df ) summary(qpoisson_admin)</code></p>
+</details>
+<p>Under the quasi-Poisson adjustments, only a few key predictors remain
+highly significant, confirming that we have removed all those predictors
+whose significance was only due to underestimated variability and which
+are no longer significant once we account for the overdispersion
+(2.58).</p>
+<h2 id="glm-negative-binomial">GLM Negative Binomial</h2>
+<p>Finally, we fit a Negative Binomial GLM, which extends the Poisson
+model by introducing a dispersion parameter <span
+class="math inline"><em>θ</em></span> to explicitly model the variance
+beyond the Poisson assumption. Thus, we shift the variance function from
+the linear form used by the quasi-Poisson model to the quadratic form
+used by the Negative Binomial model.</p>
+<p><span class="math display">$$
+\mathrm{Var}(Y) \;=\; \phi\,\mu
+\qquad\longrightarrow\qquad
+\mathrm{Var}(Y) \;=\; \mu \;+\; \frac{\mu^2}{\theta}
+$$</span></p>
+<details>
+<summary>
+<em>Click to see the negative-binomial GLM</em>
+</summary>
+<p><code>{r negative binomial GLM1} nbinom_admin &lt;- glm.nb(   Administrative ~ Administrative_Duration + Informational + Informational_Duration +     ProductRelated + ProductRelated_Duration + BounceRates + ExitRates + SpecialDay +     Month + OperatingSystems + Browser + Region + TrafficType + VisitorType +     Weekend + Revenue,   data = df ) summary(nbinom_admin)</code></p>
+</details>
+<details>
+<summary>
+<em>Click to see the code to plot the residuals against fitted
+values</em>
+</summary>
+<code>{r code of negative binomial GLM2 plots, eval=FALSE} par(mfrow=1:2) plot(fitted(poisson_admin),      residuals(poisson_admin, "deviance"),      main="Poisson Residuals vs Fitted",       xlab="Fitted values",       ylab="Deviance residuals",      col  = "lightblue",      pch  = 16) abline(h=0, lty=2) plot(fitted(nbinom_admin),      residuals(nbinom_admin, "deviance"),      main="Negative Binomial Residuals vs Fitted",       xlab="Fitted values",       ylab="Deviance residuals",      col  = "lightblue",      pch  = 16) abline(h=0, lty=2)</code>
+</details>
+<p><code>{r negative binomial GLM2, echo=FALSE, fig.width=8.5, fig.asp=0.5} par(mfrow=1:2) plot(fitted(poisson_admin),      residuals(poisson_admin, "deviance"),      main="Poisson Residuals vs Fitted",       xlab="Fitted values",       ylab="Deviance residuals",      col  = "lightblue",      pch  = 16) abline(h=0, lty=2) plot(fitted(nbinom_admin),      residuals(nbinom_admin, "deviance"),      main="Negative Binomial Residuals vs Fitted",       xlab="Fitted values",       ylab="Deviance residuals",      col  = "lightblue",      pch  = 16) abline(h=0, lty=2)</code></p>
+<p>Under the Negative Binomial GLM, several coefficients
+(<em>OperatingSystems</em>, <em>VisitorType</em>, <em>Weekend</em>,
+etc.) lose significance, reflecting its ability to reduce outlying
+predictors. The relatively low dispersion parameter <span
+class="math inline"><em>θ</em></span> (around 1.21) indicates
+substantial overdispersion, meaning that variance increases
+quadratically rather than linearly with the mean. Comparing the AIC
+scores of the Poisson GLM and the Negative Binomial GLM, we clearly see
+an improvement in balancing model fit and complexity indicated by a
+lower AIC. Hence, the Negative Binomial GLM (AIC = 41’558) is the
+preferred count model for <em>Administrative</em>. This is also visible
+when plotting the predicted versus actual values for both models; the
+Negative Binomial GLM has no funnel form and therefore fewer outliers
+than the Poisson GLM.</p>
+<h3 id="interpretation-2">Interpretation</h3>
+<p>While several coefficients are statistically significant and each
+additional unit is associated with an increase or decrease in the
+<em>Administrative</em> page count (e.g. +0.0041 for
+<em>Administrative_Duration</em>, +0.1017 for <em>Informational</em>,
+and +0.0058 for <em>ProductRelated</em>), the most interesting variables
+are <em>BounceRates</em> and <em>ExitRates</em>.</p>
+<p><strong>BounceRates (Estimate: 4.6428, p &lt; .001)</strong> The
+model suggests that sessions with higher bounce rates tend to have more
+views of administrative pages. This may imply that when customers
+encounter friction (e.g. broken link or unclear checkout), they do not
+immediately leave the website. Instead, they might navigate to help,
+FAQ, or support pages (i.e. <em>Administrative</em> pages) trying to
+resolve the issue.</p>
+<p><strong>ExitRates (Estimate: –21.8016, p &lt; .001)</strong> The
+negative coefficient for <em>ExitRates</em> indicates that sessions with
+higher <em>ExitRates</em> tend to have fewer views of administrative
+pages. This suggests that once visitors decide to leave, they exit the
+site directly without navigating to administrative pages. From a
+business perspective, this could be a warning sign as we may be losing
+customers before they reach any help resources.</p>
+<p>```{r GLM Poisson, include = FALSE, echo = FALSE} # fill in for model
+comparison at the end add_model_comparison(model = “GLM Poisson”,
+targetvar = “Administrative”, aic = AIC(poisson_admin))</p>
+<p>add_model_comparison(model = “GLM Negative Binomial”, targetvar =
+“Administrative”, aic = AIC(nbinom_admin))</p>
+<pre><code>
+*David Gerner took the lead in the GLM Poisson section.*
+
+
+# Support Vector Machines (SVM)
+
+Next, we want to predict *Revenue* using a Support Vector Machine model.
+Prior to modeling, the data needs to be prepared. First, we transform the
+binary target variable *Revenue* into a factor with the levels &quot;No&quot; and
+&quot;Yes&quot; to indicate to the SVM that this is a classification task. Then, we
+dummy encode all categorical predictor variables and then center and scale
+all variables. This ensures that predictors measured on larger scales do
+not dominate the model.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the data preparation*&lt;/summary&gt;
+
+```{r SVM data-preparation}
+# transform Revenue into factor with Yes / No levels
+dfsvm &lt;- df
+dfsvm$Revenue &lt;- factor(dfsvm$Revenue,
+                     levels = c(FALSE, TRUE),
+                     labels = c(&quot;No&quot;, &quot;Yes&quot;))
+
+# dummy encode factors
+dummies &lt;- dummyVars(Revenue ~ ., data = dfsvm)
+df_enc &lt;- predict(dummies, newdata = dfsvm)
+
+# center and scale all variables
+pp &lt;- preProcess(df_enc, method = c(&quot;center&quot;, &quot;scale&quot;))
+df_scaled &lt;- predict(pp, df_enc)</code></pre>
+</details>
+<p>Finally, we set up an unbiased test by splitting the data so that 80%
+is used for model fitting and 20% for testing the model. This split is
+stratified in order to maintain the proportional distribution of the
+“No” and “Yes” classes in both the training and testing data set.</p>
+<details>
+<summary>
+<em>Click to see the test and training split</em>
+</summary>
+<p><code>{r Training Testing} set.seed(123) idx &lt;- createDataPartition(dfsvm$Revenue, p = 0.8, list = FALSE) trainsvm &lt;- df_scaled[idx, ] testsvm &lt;- df_scaled[-idx, ] train_lbl &lt;- dfsvm$Revenue[idx] test_lbl &lt;- dfsvm$Revenue[-idx]</code></p>
+</details>
+<h2 id="svm-model">SVM Model</h2>
+<p>First, we define a 3-fold cross-validation to smooth out variability
+and optimize the ROC-AUC metric. Due to time constraints, the SVM only
+runs three resamples, from which the cost value with the highest average
+ROC-AUC is selected. We train the SVM model on the training data and
+corresponding labels using the <code>caret::train()</code> function with
+a linear kernel and the previously defined hyperparameter tuning
+settings.</p>
+<details>
+<summary>
+<em>Click to see the hyperparameter setting and model training</em>
+</summary>
+<p>```{r SVM SetUp, cache=TRUE} set.seed(123)</p>
+<h1 id="hyperparameter-tuning-settings">Hyperparameter tuning
+settings</h1>
+<p>ctrl &lt;- trainControl(method = “cv”, number = 3, classProbs = TRUE,
+summaryFunction = twoClassSummary, savePredictions = “final”) grid_lin
+&lt;- expand.grid(C = 2^(-3:3)) print(grid_lin)</p>
+<h1 id="model-training">model training</h1>
+<p>svm_tuned &lt;- train(x = trainsvm, y = train_lbl, method =
+“svmLinear”, metric = “ROC”, trControl = ctrl, tuneGrid = grid_lin,
+tolerance = 1e-3) svm_tuned</p>
+<pre><code>
+&lt;/details&gt;
+
+From the cross-validation results, we extract the ROC-AUC scores for all cost
+values and visualize them. A cost value of 0.125 seems to give the best
+separation between buyers and non-buyers with a ROC-AUC of approximately
+0.8848. We then retrain the SVM model on the entire 80% training set using
+this optimal cost value and predict the class probabilities on the held-out
+20% test set.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code for the ROC curve*&lt;/summary&gt;
+
+```{r code ROC-AUC plot, fig.show=&#39;hide&#39;}
+# show tuning plot (ROC vs. Cost)
+plot(svm_tuned, metric = &quot;ROC&quot;, main = &quot;ROC-AUC vs Cost&quot;)
+
+# Final evaluation on test set
+svm_tuned$finalModel
+
+# get class‐probabilities
+pred_prob &lt;- predict(svm_tuned, testsvm, type = &quot;prob&quot;)
+probs &lt;- pred_prob[, &quot;Yes&quot;]</code></pre>
+</details>
+<p><code>{r ROC-AUC plot, echo=FALSE, fig.width=6, fig.asp=0.7} # show tuning plot (ROC vs. Cost) plot(svm_tuned, metric = "ROC", main = "ROC-AUC vs Cost")</code></p>
+<h2 id="model-performance-1">Model Performance</h2>
+<h3 id="confusion-matrix">Confusion Matrix</h3>
+<p>The confusion matrix provides a clear overview of the model
+performance. Overall, the model shows a strong accuracy by correctly
+classifying about 89% of all sessions. The model is quite bad at
+correctly identifying buyers, as indicated by a low sensitivity of about
+36%, meaning it mislabels abound 64% of the buyers as non-buyers. On the
+other hand, the model is very good at detecting non-buyers as indicated
+by a very high specificity of around 98.7%.</p>
+<p>When the model predicts that a session has revenue, it is accurate
+about 83.4% of the time, as indicated by the positive predictive value.
+Similarly, when it predicts that a session will not result in revenue,
+it is correct about 89.4% of the time as indicated by the negative
+predictive value.</p>
+<p>The model has a moderate balanced accuracy of about 67.2%, reflecting
+its performance across both groups by averaging how well it detects
+buyers (sensitivity) and non-buyers (specificity).</p>
+<details>
+<summary>
+<em>Click to see the code for the confusion matrix</em>
+</summary>
+<p><code>{r confusion matrix} # confusion matrix at default threshold pred_class &lt;- predict(svm_tuned, testsvm) cm &lt;- confusionMatrix(pred_class, positive = "Yes", test_lbl)</code></p>
+</details>
+<p><code>{r confusion matrix output, echo=FALSE} cm</code></p>
+<h3 id="fourfold-plot">Fourfold-Plot</h3>
+<p>The fourfold plot provides a visual overview on how many buyers and
+non-buyers were correctly identified, how many buyers were missed, and
+how many non-buyers were wrongly labeled as buyers. It makes it easy to
+see how often the model predictions were correct versus incorrect or
+both groups.</p>
+<details>
+<summary>
+<em>Click to see the code for the fourfold plot</em>
+</summary>
+<p><code>{r code of fourfold plot, eval=FALSE} fourfoldplot(cm$table)</code></p>
+</details>
+<p><code>{r fourfoldplot, echo=FALSE, fig.width=3, fig.asp=1} fourfoldplot(cm$table)</code></p>
+<h3 id="roc-curve">ROC Curve</h3>
+<p>Other than the confusion matrix, we also evaluate our SVM based on
+how confident it needs to be before predicting someone as a buyer, and
+look at the trade-off between correctly identifying buyers and producing
+false positives. The area under the ROC curve (AUC) is 0.909, meaning
+there is a 90.9% chance that a randomly selected purchaser will receive
+a higher predicted probability than a randomly selected non-purchaser.
+This indicates that our tuned linear SVM with a cost parameter of 0.125
+separates buyers from non-buyers very effectively on new data.</p>
+<details>
+<summary>
+<em>Click to see the code for the ROC Curve</em>
+</summary>
+<p><code>{r code of ROC curve svm, fig.show='hide', fig.width=6, fig.asp=0.6} roc_obj &lt;- roc(test_lbl, probs, levels = c("No","Yes"), direction = "&lt;") plot(   roc_obj,   col            = "darkblue",   lwd            = 2,   print.auc      = TRUE,   auc.polygon    = TRUE,   auc.polygon.col= "lightblue",   main           = "Tuned SVM ROC Curve" )</code></p>
+</details>
+<p><code>{r ROC curve svm, echo=FALSE, fig.width=6, fig.asp=0.6} roc_obj &lt;- roc(test_lbl, probs, levels = c("No","Yes"), direction = "&lt;") plot(   roc_obj,   col            = "darkblue",   lwd            = 2,   print.auc      = TRUE,   auc.polygon    = TRUE,   auc.polygon.col= "lightblue",   main           = "Tuned SVM ROC Curve" )</code></p>
+<h3 id="precisionrecall-curve">Precision–Recall Curve</h3>
+<p>Because buyers are the smaller group in our imbalanced data set, we
+shift the focus to the ability of detecting actual buyers using the
+Precision-Recall (PR) curve. The area under the PR curve (AUPRC) is
+0.72. This means that the model correctly identifies real buyers 72% of
+the time on average. This gives a more realistic picture of how well the
+model works when buyers are rare.</p>
+<details>
+<summary>
+<em>Click to see the code for the PR Curve</em>
+</summary>
+<p>```{r code of Precision–Recall curve, fig.show=‘hide’} fg &lt;-
+probs[test_lbl == “Yes”] bg &lt;- probs[test_lbl == “No”] pr &lt;-
+pr.curve(scores.class0 = fg, scores.class1 = bg, curve = TRUE)</p>
+<p>plot( pr, color = “lightblue”, border = “darkblue”, main =
+sprintf(“Tuned SVM PR Curve (AUC = %.3f)”, pr$auc.integral) )</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r Precision–Recall curve, echo=FALSE, fig.width=6, fig.asp=0.7}
+fg &lt;- probs[test_lbl == &quot;Yes&quot;]
+bg &lt;- probs[test_lbl == &quot;No&quot;]
+pr &lt;- pr.curve(scores.class0 = fg,
+               scores.class1 = bg,
+               curve         = TRUE)
+
+plot(
+  pr,
+  color  = &quot;lightblue&quot;,
+  border = &quot;darkblue&quot;,
+  main   = sprintf(&quot;Tuned SVM PR Curve (AUPRC = %.3f)&quot;, pr$auc.integral)
+)</code></pre>
+<p>```{r Suport Vector Machine, include = FALSE, echo = FALSE} svm_acc
+&lt;- cm<span class="math inline">$overall["Accuracy"]
+svm_sens &lt;- cm$</span>byClass[“Sensitivity”] svm_spec &lt;-
+cm$byClass[“Specificity”] svm_auc &lt;- auc(roc_obj) # AUC</p>
+<h1 id="fill-in-svm-for-model-comparison-at-the-end">fill in SVM for
+model comparison at the end</h1>
+<p>add_model_comparison(model = “Support Vector Machine”, targetvar =
+“Revenue”, acc = svm_acc, sens = svm_sens, spec = svm_spec, auc =
+svm_auc)</p>
+<pre><code>
+*David Gerner took the lead in the Support Vector Machines section.*
+
+# Neural Network
+
+We now want to predict *Revenue* by using a neural network. The class
+imbalance of our target variable might cause the neural network to be
+biased towards the majority class without *Revenue*. In a first step, we
+include all predictors in the neural network. Since neural networks
+cannot handle factors directly, we converted all categorical variables
+into numerical variables using one-hot encoding.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code for the one-hot encoding*&lt;/summary&gt;
+
+```{r one-hot encoding}
+# create dummy variables for all categorical predictors
+dummy &lt;- dummyVars(&quot;~ . - Revenue&quot;, data = df)
+
+# transformation into numeric predictors, new data frame
+df.ann &lt;- data.frame(predict(dummy, newdata = df))
+
+# ensure Revenue is binary
+df.ann$Revenue &lt;- as.numeric(df$Revenue == &quot;TRUE&quot;)</code></pre>
+</details>
+<p>In a second step, we divided our data set into training and testing
+sets, using a 80% train and 20% test split. We used stratified sampling
+to ensure that the distribution of our target variable <em>Revenue</em>
+in both the training and testing set matched our original data set.</p>
+<details>
+<summary>
+<em>Click to see the code to split the training and testing data</em>
+</summary>
+<p>```{r split training and testing data} set.seed(123) # stratified
+sampling train_idx &lt;- createDataPartition(df.ann$Revenue, p = 0.8,
+list = FALSE) train &lt;- df.ann[train_idx, ] test &lt;-
+df.ann[-train_idx, ]</p>
+<h1 id="check-class-proportions">check class proportions</h1>
+<p>table(train<span
+class="math inline"><em>R</em><em>e</em><em>v</em><em>e</em><em>n</em><em>u</em><em>e</em>)<em>t</em><em>a</em><em>b</em><em>l</em><em>e</em>(<em>t</em><em>e</em><em>s</em><em>t</em></span>Revenue)</p>
+<pre><code>
+&lt;/details&gt;
+
+As the next step, we trained and evaluated the neural network on the training
+data set. The model consists of one hidden layer with 16 neurons.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code to train the neural network*&lt;/summary&gt;
+
+```{r train neural network, cache=TRUE}
+set.seed(123)
+revenue_net &lt;- nnet(Revenue ~ ., data = train, 
+                    size = 16, # hidden layer size
+                    maxit = 10000,  # max. iterations
+                    range = 0.1,  # initial weights range
+                    decay = 5e-4, # parameter for weight decay
+                    MaxNWts = 2000) # max. number of weights</code></pre>
+</details>
+<p><code>{r plot neural network, include=FALSE} plot(revenue_net) revenue_net</code></p>
+<p>We then used the trained neural network to make predictions on the
+testing data set. To analyse the model performance, we compared its
+predictions with the actual values using a confusion matrix.</p>
+<details>
+<summary>
+<em>Click to see code for the model predictions and confusion
+matrix</em>
+</summary>
+<p>```{r make predictions} # predict probabilities pred_probs &lt;-
+predict(revenue_net, newdata = test, type=“raw”)</p>
+<h1 id="convert-probabilities-to-class-labels-threshold-of-0.5">convert
+probabilities to class labels (threshold of 0.5)</h1>
+<p>pred_labels &lt;- ifelse(pred_probs &gt; 0.5, 1, 0)</p>
+<h1 id="create-confusion-matrix">create confusion matrix</h1>
+<p>cm &lt;- confusionMatrix(as.factor(pred_labels),
+as.factor(test$Revenue), positive = “1”) cm</p>
+<pre><code>
+&lt;/details&gt;
+
+The confusion matrix shows that our model has an overall accuracy of 88%,
+representing the percentage of correct predictions. The sensitivity is
+only 53.7%, indicating that our model is not very effective at detecting
+positive cases of *Revenue*. In contrast, the specificity is high with
+94.2%, meaning our model is very effective at identifying cases where there
+is no *Revenue*. The high specificity and low sensitivity suggest that the
+model is biased towards predicting non-buyers correctly at the expense of
+missed buyers. This is likely due to the class imbalance in the sample.
+
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see code for the ROC and PR curves*&lt;/summary&gt;
+
+```{r ROC and PR curve}
+# create prediction object
+pred &lt;- ROCR::prediction(pred_probs, test$Revenue)
+
+# prepare plot ROC curve
+perf_roc &lt;- ROCR::performance(pred, &quot;tpr&quot;, &quot;fpr&quot;)
+
+# prepare plot Precision-Recall Curve
+perf_pr &lt;- performance(pred, &quot;prec&quot;, &quot;rec&quot;)</code></pre>
+</details>
+<p>```{r Plot ROC and PR curves, echo=FALSE, fig.width=8.5, fig.asp=0.5}
+# set up plot layout par(mfrow = c(1, 2))</p>
+<h1 id="plot-roc-curve">plot ROC curve</h1>
+<p>plot(perf_roc, lwd=2, col=“lightblue”, main = “ROC Curve”)
+abline(a=0, b=1)</p>
+<h1 id="plot-pr-curve">plot PR curve</h1>
+<p>plot(perf_pr, lwd=2, col=“lightblue”, main = “Precision-Recall
+Curve”)</p>
+<pre><code>
+
+To asses the quality of our model, we use the Receiver Operating
+Characteristic (ROC) and the Precision-Recall (PR) curve. For the ROC curve
+we plot the true positive rate (sensitivity) against the false positive
+rate (1 - specificity). The plot shows that a high true positive rate
+(around 0.8) can be achieved when lowering the classification threshold
+which would mean accepting more false positives.
+
+The PR curve, on the other hand, shows the trade-off between precision and
+recall for the binary classifier *Revenue* at different threshold settings.
+The curve peaks around 0.75 precision at low recall values. This means the
+model can be very precise when it is conservative about making
+positive predictions. As recall increases, the precision decreases.
+
+Finally, we look at the AUC value of the model. The AUC is 0.886 which
+indicates a good discrimination ability of the model between classes.
+Yet the current threshold (low false positive rate) prioritizes cost
+control (e.g. not wasting marketing efforts on unlikely purchasers) over
+leveraging potential revenue opportunities. Assuming the cost of marketing
+to be relatively low relative to the potential value of additional revenue,
+lowering the threshold seems a valid option. This could increase recall
+significantly while maintaining reasonable precision.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see code for the AUC*&lt;/summary&gt;
+
+```{r AUC code}
+# calculate AUC
+auc &lt;- performance(pred, measure = &quot;auc&quot;)
+auc_value &lt;- as.numeric(auc@y.values[[1]])
+auc_value</code></pre>
+</details>
+<p>```{r Neural Network evaluation, include = FALSE, echo = FALSE} #
+extract metrics ann_acc &lt;- cm<span
+class="math inline">$overall["Accuracy"]
+ann_sens &lt;- cm$</span>byClass[“Sensitivity”] ann_spec &lt;-
+cm$byClass[“Specificity”] ann_auc &lt;- auc_value</p>
+<h1 id="fill-in-ann-for-model-comparison-at-the-end">fill in ANN for
+model comparison at the end</h1>
+<p>add_model_comparison(model = “Neural Network”, targetvar = “Revenue”,
+acc = ann_acc, sens = ann_sens, spec = ann_spec, auc = ann_auc)</p>
+<pre><code>
+## Neural Network Optimization and Cross-Validation
+
+To further evaluate the neural network&#39;s performance and reduce the risk
+of overfitting, we use a 5-fold cross-validation repeated 10 times. This
+means that the data set was split into five parts, with the model trained
+and validated on different combinations of these splits multiple times.
+To optimize the model, two hyperparameters were tuned: the size of the
+hidden layer and weight decay. A tuning grid was defined to explore multiple
+values for each hyperparameter, allowing the training process to identify
+the combination that results in the best performance based on the ROC metric. 
+To handle class imbalance in the target variable, the Synthetic Minority 
+Over-Sampling Technique (SMOTE) from the `{themis}` package was used. SMOTE
+artificially increases the number of minority class examples during training,
+helping the model to better learn patterns from both classes. To apply SMOTE,
+*Revenue* had to be transformed into a factor rather than binary variable.
+
+&lt;details&gt;
+
+&lt;summary&gt;*Click to see the code for the variable encoding*&lt;/summary&gt;
+
+```{r Ensure Variables are correctly encoded}
+# create dummy variables for all categorical predictors
+dummy &lt;- dummyVars(&quot;~ . - Revenue&quot;, data = df)
+
+# transformation into numeric predictors, new data frame
+df.ann2 &lt;- data.frame(predict(dummy, newdata = df))
+
+# encode Revenue as a factor (necessary for SMOTE)
+df.ann2$Revenue &lt;- factor(
+  ifelse(df$Revenue == &quot;TRUE&quot;, &quot;yes&quot;, &quot;no&quot;),
+  levels = c(&quot;yes&quot;, &quot;no&quot;)  # Positive class first for ROC
+)
+
+# stratified sampling 
+train_idx &lt;- createDataPartition(df.ann2$Revenue, p = 0.8, list = FALSE)
+train.2 &lt;- df.ann2[train_idx, ]
+test.2 &lt;- df.ann2[-train_idx, ]</code></pre>
+</details>
+<details>
+<summary>
+<em>Click to see the code for the cross-validation and optimization of
+the neural network</em>
+</summary>
+<p>```{r Neural Network Optimization, eval=FALSE} set.seed(123)</p>
+<h1 id="define-training-control">define training control</h1>
+<p>train_control &lt;- trainControl( method = “repeatedcv”, number = 5,
+# 5 fold cross-validation repeats = 10, # repeat 10 times classProbs =
+TRUE, summaryFunction = twoClassSummary, # for ROC metric sampling =
+“smote”, # synthetic minority over-sampling returnResamp = “final”, #
+returns only the best models summary savePredictions = “final” )</p>
+<h1 id="confirm-that-the-positive-class-is-the-first-level">confirm that
+the positive class is the first level</h1>
+<p>levels(train.2$Revenue)</p>
+<h1 id="tuning-grid-for-nnet">tuning grid for nnet</h1>
+<p>tuGrid &lt;- expand.grid( size = c(1:4), decay = c(0, 0.001, 0.01,
+0.1) )</p>
+<h1 id="train-the-model">train the model</h1>
+<p>models &lt;- train( x = dplyr::select(train.2, -Revenue), y =
+train.2$Revenue, method = ‘nnet’, metric = ‘ROC’, preProcess =
+c(‘center’, ‘scale’), tuneGrid = tuGrid, trControl = train_control,
+trace = FALSE # suppress nnet output during training )</p>
+<h1 id="save-models">save models</h1>
+<p>saveRDS(models, file = “models_nnet.rds”)</p>
+<pre><code>
+&lt;/details&gt;
+
+The following plot displays the results of the hyperparameter tuning. Each line
+represents a different value of weight decay. The x-axis displays the number
+of hidden units, while the y-axis shows the mean ROC score across resamples.
+The best performance is achieved with 3 hidden units and a weight decay
+value of 0.01, resulting in a ROC score close to 0.908.
+
+```{r ANN CV and Optimization Output, echo=FALSE}
+# plot model comparison
+models &lt;- readRDS(&quot;models_nnet.rds&quot;)
+plot(models)</code></pre>
+<details>
+<summary>
+<em>Click to see the results for all models</em>
+</summary>
+<p><code>{r results all ANN models} models$results final_metrics &lt;- subset(models$results,                         size == models$bestTune$size &amp;                          decay == models$bestTune$decay)</code></p>
+</details>
+<p><code>{r result final ANN model, echo = FALSE} print(final_metrics)</code></p>
+<p>We now use the final model to make predictions on the test data set
+and compare its performance to the initial neural network. The AUC has
+improved to 0.923 compared to 0.886 in the initial model. The confusion
+matrix shows a slightly lower overall accuracy of 86.17% compared to
+88.04%. While sensitivity is significantly better with 81.6% compared to
+53.7%, the specificity is lower with 87% compared to 94.2%. Since our
+main goal is to identify customers who generate revenue, the substantial
+improvement in sensitivity is worth the small drop in specificity.</p>
+<details>
+<summary>
+<em>Click to see the confusion matrix and AUC</em>
+</summary>
+<p>```{r code best model confusion matrix} # Predict on test set
+(without the Revenue column) pred_class &lt;- predict(models, newdata =
+dplyr::select(test.2, -Revenue))</p>
+<h1 id="ensure-prediction-is-a-factor-with-same-levels">Ensure
+prediction is a factor with same levels</h1>
+<p>pred_class &lt;- factor(pred_class, levels =
+levels(test.2$Revenue))</p>
+<h1 id="compute-confusion-matrix">Compute confusion matrix</h1>
+<p>cm &lt;- confusionMatrix(pred_class, test.2$Revenue)</p>
+<h1 id="predict-probabilities-for-the-positive-class">Predict
+probabilities for the positive class</h1>
+<p>pred_prob &lt;- predict(models, newdata = dplyr::select(test.2,
+-Revenue), type = “prob”)</p>
+<h1 id="compute-roc-curve-and-auc">Compute ROC curve and AUC</h1>
+<p>roc_obj &lt;- roc(response = test.2<span
+class="math inline"><em>R</em><em>e</em><em>v</em><em>e</em><em>n</em><em>u</em><em>e</em>, <em>p</em><em>r</em><em>e</em><em>d</em><em>i</em><em>c</em><em>t</em><em>o</em><em>r</em> = <em>p</em><em>r</em><em>e</em><em>d</em><sub><em>p</em></sub><em>r</em><em>o</em><em>b</em></span>yes)</p>
+<h1 id="print-confusion-matrix-and-auc">print confusion matrix and
+auc</h1>
+<p>cm auc(roc_obj)</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r Neural Network optimized evaluation, include = FALSE, echo = FALSE}
+# extract metrics
+ann_acc &lt;- cm$overall[&quot;Accuracy&quot;]
+ann_sens &lt;- cm$byClass[&quot;Sensitivity&quot;]
+ann_spec &lt;- cm$byClass[&quot;Specificity&quot;]
+ann_auc &lt;- auc(roc_obj)
+
+# fill in ANN for model comparison at the end
+add_model_comparison(model = &quot;Neural Network optimized&quot;, targetvar = &quot;Revenue&quot;,
+                     acc = ann_acc, sens = ann_sens, spec = ann_spec,
+                     auc = ann_auc)</code></pre>
+<p><em>Valérie Lüthi took the lead in the neural network
+section.</em></p>
+<h1 id="conclusion">Conclusion</h1>
+<details>
+<summary>
+<em>Click to see the functions that were used to create the comparison
+table</em>
+</summary>
+<p>``<code>{r code model comparison, eval=FALSE} # prepare data frame for metrics model_comparison &lt;- data.frame(   Model = character(),</code>Target
+Variable<code>= character(),   Accuracy = numeric(),   Sensitivity = numeric(),   Specificity = numeric(),   AUC = numeric(),   AIC = numeric(),</code>R-squared`
+= numeric() )</p>
+<h1 id="define-function-to-add-new-model-to-data-frame-1">define
+function to add new model to data frame</h1>
+<p>add_model_comparison &lt;- function(model, targetvar, acc = NA, sens
+= NA, spec = NA, auc = NA, aic = NA, r2 = NA) { new_row &lt;-
+data.frame( Model = model, <code>Target Variable</code> = targetvar,
+Accuracy = acc, Sensitivity = sens, Specificity = spec, AUC = auc, AIC =
+aic, <code>R-squared</code> = r2 ) assign(“model_comparison”,
+rbind(model_comparison, new_row), envir = .GlobalEnv) }</p>
+<pre><code>
+&lt;/details&gt;
+
+```{r overall model comparison, echo = FALSE}
+# Define the desired order for Target.Variable
+custom_order &lt;- c(&quot;log(PageValues)&quot;, &quot;Administrative&quot;, &quot;Revenue&quot;)
+
+# replace NA with dash (&quot;-&quot;) for display only
+model_comparison_ordered &lt;- model_comparison %&gt;%
+  mutate(`Target.Variable` = factor(`Target.Variable`, levels = custom_order)) %&gt;%
+  arrange(`Target.Variable`)
+
+display_comparison &lt;- model_comparison_ordered %&gt;%
+  # round numeric values to 3 except for AIC
+  mutate(across(where(is.numeric) &amp; !matches(&quot;AIC&quot;), ~ round(., 3))) %&gt;%
+  # round AIC to 0 digits
+  mutate(across(matches(&quot;AIC&quot;), ~ round(., 0))) %&gt;%
+  # convert everything to characters, replace NA with -
+  mutate(across(everything(), as.character),
+         across(everything(), ~ ifelse(is.na(.), &quot;-&quot;, .)))
+
+kable(display_comparison, booktabs = TRUE, align=&#39;c&#39;, row.names = FALSE) %&gt;%
+  kable_styling(font_size = 12, bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<p>Since our target variable <em>Revenue</em> was binary we had to
+choose alternative continuous variables for our linear and Poisson
+models. Therefore, those models are not directly comparable to the
+classification models predicting <em>Revenue</em>.</p>
+<p>Among the classification models, the simple GAM achieved good overall
+accuracy and specificity, with moderate sensitivity. This illustrates
+that a simpler and more interpretable model can perform well. The GLM
+Binomial, SVM and Neural Network all showed very high specificity at the
+cost of very low sensitivity, making them conservative in predicting
+buyers. This was likely due to the class imbalance in <em>Revenue</em>.
+To address this issue, we optimized the neural network using SMOTE to
+balance the classes. This led to a significant improvement in
+sensitivity, helping to better identify potential buyers, while only
+slightly reducing specificity.</p>
+<p>From a business perspective, high sensitivity is crucial to
+accurately identify online buyers to target marketing efforts
+effectively and maximize <em>Revenue</em>, even if this means to accept
+some false positives. The optimized neural network offers a balanced
+approach to successfully predict <em>Revenue</em> in online-shopping
+sessions.</p>
+<h1 id="use-of-generative-ai">Use of Generative AI</h1>
+<p>In this assignment, we used generative AI in the form of ChatGPT as a
+supportive tool for coding and debugging. The AI has been particularly
+helpful in explaining functions that we were not familiar with and in
+helping to debug coding errors.</p>
+<p>We noticed that the specificity of our prompts had a big impact on
+the quality of the responses and that it is essential to evaluate the
+AI-generated answers thoroughly.</p>
+<p>For this project, we worked with publicly available data. Working in
+a professional setting as a data scientist, this is often not the case.
+This makes it crucial to be extremely cautious about what information is
+shared with generative AI tools.</p>
+<h1 id="references">References</h1>
+</body>
+</html>
